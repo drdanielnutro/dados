@@ -1,0 +1,3405 @@
+[
+  {
+    "id": "google.adk.agents.BaseAgent",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "BaseAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "Base class for all agents in Agent Development Kit",
+      "methods": [
+        {
+          "method": "find_agent",
+          "description": "Finds the agent with the given name in this agent and its descendants"
+        },
+        {
+          "method": "find_sub_agent",
+          "description": "Finds the agent with the given name in this agent's descendants"
+        },
+        {
+          "method": "run_async",
+          "description": "Entry method to run an agent via text-based conversation"
+        },
+        {
+          "method": "run_live",
+          "description": "Entry method to run an agent via video/audio-based conversation"
+        }
+      ],
+      "fields": [
+        {
+          "field": "name",
+          "description": "The agent's name. Must be a Python identifier and unique within the agent tree. Cannot be 'user'."
+        },
+        {
+          "field": "description",
+          "description": "Description about the agent's capability. Used by the model to determine whether to delegate control."
+        },
+        {
+          "field": "parent_agent",
+          "description": "The parent agent of this agent. An agent can only be added as sub-agent once."
+        },
+        {
+          "field": "sub_agents",
+          "description": "The sub-agents of this agent"
+        },
+        {
+          "field": "before_agent_callback",
+          "description": "Callback invoked before the agent run"
+        },
+        {
+          "field": "after_agent_callback",
+          "description": "Callback invoked after the agent run"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "BaseAgent",
+      "class_data": {
+        "description": "Base class for all agents in Agent Development Kit",
+        "type": "pydantic_model",
+        "fields": {
+          "name": {
+            "type": "str",
+            "required": true,
+            "description": "The agent's name. Must be a Python identifier and unique within the agent tree. Cannot be 'user'."
+          },
+          "description": {
+            "type": "str",
+            "default": "",
+            "description": "Description about the agent's capability. Used by the model to determine whether to delegate control."
+          },
+          "parent_agent": {
+            "type": "Optional[BaseAgent]",
+            "default": null,
+            "description": "The parent agent of this agent. An agent can only be added as sub-agent once."
+          },
+          "sub_agents": {
+            "type": "list[BaseAgent]",
+            "description": "The sub-agents of this agent"
+          },
+          "before_agent_callback": {
+            "type": "Optional[BeforeAgentCallback]",
+            "default": null,
+            "description": "Callback invoked before the agent run"
+          },
+          "after_agent_callback": {
+            "type": "Optional[AfterAgentCallback]",
+            "default": null,
+            "description": "Callback invoked after the agent run"
+          }
+        },
+        "methods": {
+          "find_agent": {
+            "description": "Finds the agent with the given name in this agent and its descendants",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[BaseAgent]"
+          },
+          "find_sub_agent": {
+            "description": "Finds the agent with the given name in this agent's descendants",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[BaseAgent]"
+          },
+          "run_async": {
+            "description": "Entry method to run an agent via text-based conversation",
+            "parameters": {
+              "parent_context": "InvocationContext"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "run_live": {
+            "description": "Entry method to run an agent via video/audio-based conversation",
+            "parameters": {
+              "parent_context": "InvocationContext"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseAgent",
+        "LlmAgent",
+        "LoopAgent",
+        "ParallelAgent",
+        "SequentialAgent"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 4,
+      "field_count": 6,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseAgent classe base do Google ADK para criar e gerenciar agentes conversacionais. Parte do módulo agents, que contém todas as implementações de agentes do kit de desenvolvimento. Trabalha em conjunto com LlmAgent, LoopAgent, ParallelAgent, SequentialAgent e serve como classe pai para todos os tipos de agentes. É usado para definir a estrutura hierárquica de agentes, controlar delegação entre agentes e executar conversas via texto ou áudio/vídeo. Métodos principais: run_async para conversas baseadas em texto, run_live para conversas com áudio/vídeo, find_agent para localizar agentes na árvore, find_sub_agent para buscar sub-agentes. Campos essenciais: name (identificador único), description (capacidades do agente), sub_agents (agentes filhos), parent_agent (agente pai). Erros comuns incluem: 'nome deve ser identificador Python válido (name must be valid Python identifier)', 'agente já adicionado como sub-agente (agent already added as sub-agent)', 'nome reservado user não permitido (reserved name user not allowed)', 'agente não encontrado (agent not found)'. Sintomas típicos são: erro ao criar agente com nome inválido, falha na delegação entre agentes, sub-agente não responde quando chamado, hierarquia de agentes quebrada. Para solucionar, verifique se o nome do agente é um identificador Python válido, se não há duplicatas na árvore de agentes e se os callbacks estão configurados corretamente. Busque por este componente se encontrar problemas com criação de agentes, hierarquia de agentes, delegação de controle, agente base, estrutura de agentes, conversação multimodal."
+  },
+  {
+    "id": "google.adk.agents.LlmAgent",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "LlmAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "LLM-based Agent",
+      "fields": [
+        {
+          "field": "model",
+          "description": "The model to use for the agent. When not set, inherits from ancestor."
+        },
+        {
+          "field": "instruction",
+          "description": "Instructions for the LLM model, guiding the agent's behavior"
+        },
+        {
+          "field": "global_instruction",
+          "description": "Instructions for all agents in the entire agent tree. Only takes effect in root agent."
+        },
+        {
+          "field": "tools",
+          "description": "Tools available to this agent"
+        },
+        {
+          "field": "generate_content_config",
+          "description": "Additional content generation configurations"
+        },
+        {
+          "field": "disallow_transfer_to_parent",
+          "description": "Disallows LLM-controlled transferring to the parent agent"
+        },
+        {
+          "field": "disallow_transfer_to_peers",
+          "description": "Disallows LLM-controlled transferring to the peer agents"
+        },
+        {
+          "field": "include_contents",
+          "description": "Whether to include contents in the model request"
+        },
+        {
+          "field": "input_schema",
+          "description": "The input schema when agent is used as a tool"
+        },
+        {
+          "field": "output_schema",
+          "description": "The output schema when agent replies"
+        },
+        {
+          "field": "output_key",
+          "description": "Key in session state to store agent output"
+        },
+        {
+          "field": "planner",
+          "description": "Instructs the agent to make a plan and execute it step by step"
+        },
+        {
+          "field": "code_executor",
+          "description": "Allow agent to execute code blocks from model responses"
+        },
+        {
+          "field": "examples",
+          "description": "Few-shot examples for the agent"
+        },
+        {
+          "field": "before_model_callback",
+          "description": "Callback(s) called before calling the LLM"
+        },
+        {
+          "field": "after_model_callback",
+          "description": "Callback(s) called after calling the LLM"
+        },
+        {
+          "field": "before_tool_callback",
+          "description": "Called before the tool is called"
+        },
+        {
+          "field": "after_tool_callback",
+          "description": "Called after the tool is called"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "LlmAgent",
+      "class_data": {
+        "description": "LLM-based Agent",
+        "base_class": "BaseAgent",
+        "type": "pydantic_model",
+        "fields": {
+          "model": {
+            "type": "Union[str, BaseLlm]",
+            "default": "",
+            "description": "The model to use for the agent. When not set, inherits from ancestor."
+          },
+          "instruction": {
+            "type": "Union[str, InstructionProvider]",
+            "default": "",
+            "description": "Instructions for the LLM model, guiding the agent's behavior"
+          },
+          "global_instruction": {
+            "type": "Union[str, InstructionProvider]",
+            "default": "",
+            "description": "Instructions for all agents in the entire agent tree. Only takes effect in root agent."
+          },
+          "tools": {
+            "type": "list[ToolUnion]",
+            "description": "Tools available to this agent"
+          },
+          "generate_content_config": {
+            "type": "Optional[types.GenerateContentConfig]",
+            "default": null,
+            "description": "Additional content generation configurations"
+          },
+          "disallow_transfer_to_parent": {
+            "type": "bool",
+            "default": false,
+            "description": "Disallows LLM-controlled transferring to the parent agent"
+          },
+          "disallow_transfer_to_peers": {
+            "type": "bool",
+            "default": false,
+            "description": "Disallows LLM-controlled transferring to the peer agents"
+          },
+          "include_contents": {
+            "type": "Literal['default', 'none']",
+            "default": "default",
+            "description": "Whether to include contents in the model request"
+          },
+          "input_schema": {
+            "type": "Optional[type[BaseModel]]",
+            "default": null,
+            "description": "The input schema when agent is used as a tool"
+          },
+          "output_schema": {
+            "type": "Optional[type[BaseModel]]",
+            "default": null,
+            "description": "The output schema when agent replies"
+          },
+          "output_key": {
+            "type": "Optional[str]",
+            "default": null,
+            "description": "Key in session state to store agent output"
+          },
+          "planner": {
+            "type": "Optional[BasePlanner]",
+            "default": null,
+            "description": "Instructs the agent to make a plan and execute it step by step"
+          },
+          "code_executor": {
+            "type": "Optional[BaseCodeExecutor]",
+            "default": null,
+            "description": "Allow agent to execute code blocks from model responses"
+          },
+          "examples": {
+            "type": "Optional[ExamplesUnion]",
+            "default": null,
+            "description": "Few-shot examples for the agent"
+          },
+          "before_model_callback": {
+            "type": "Optional[BeforeModelCallback]",
+            "default": null,
+            "description": "Callback(s) called before calling the LLM"
+          },
+          "after_model_callback": {
+            "type": "Optional[AfterModelCallback]",
+            "default": null,
+            "description": "Callback(s) called after calling the LLM"
+          },
+          "before_tool_callback": {
+            "type": "Optional[BeforeToolCallback]",
+            "default": null,
+            "description": "Called before the tool is called"
+          },
+          "after_tool_callback": {
+            "type": "Optional[AfterToolCallback]",
+            "default": null,
+            "description": "Called after the tool is called"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseAgent",
+        "LlmAgent",
+        "LoopAgent",
+        "ParallelAgent",
+        "SequentialAgent"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseAgent",
+      "type": "pydantic_model",
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 18,
+      "constructor_params": false
+    },
+    "descricao_processada": "LlmAgent classe do Google ADK para criar agentes baseados em modelos de linguagem (LLM) que podem processar conversas, usar ferramentas e executar tarefas complexas. Parte do módulo agents, que fornece diferentes tipos de agentes para automação e interação. Herda de BaseAgent e trabalha em conjunto com LoopAgent, ParallelAgent, SequentialAgent. É usado para construir assistentes conversacionais, chatbots inteligentes e agentes que precisam raciocinar com linguagem natural. Campos principais incluem model para definir o LLM, instruction para comportamento do agente, tools para funcionalidades extras, planner para execução step-by-step, code_executor para rodar código. Erros comuns incluem: 'modelo não configurado (model not configured)', 'instrução vazia (empty instruction)', 'ferramenta não encontrada (tool not found)', 'callback falhou (callback failed)', 'schema inválido (invalid schema)'. Sintomas típicos são: agente não responde ou dá respostas genéricas, ferramentas não são chamadas corretamente, transferência entre agentes falha, código não executa, exemplos few-shot são ignorados. Para solucionar, verifique se o campo model está definido, se as instruções são claras, se as ferramentas estão registradas corretamente e se os callbacks não geram exceções. Busque por este componente se encontrar problemas com agentes conversacionais, LLM agent, chatbot, assistente virtual, execução de código, planejamento de tarefas, transfer between agents."
+  },
+  {
+    "id": "google.adk.agents.LoopAgent",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "LoopAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in a loop until escalation or max_iterations reached",
+      "fields": [
+        {
+          "field": "max_iterations",
+          "description": "Maximum number of iterations. If not set, runs indefinitely until escalation."
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "LoopAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in a loop until escalation or max_iterations reached",
+        "base_class": "BaseAgent",
+        "fields": {
+          "max_iterations": {
+            "type": "Optional[int]",
+            "default": null,
+            "description": "Maximum number of iterations. If not set, runs indefinitely until escalation."
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseAgent",
+        "LlmAgent",
+        "LoopAgent",
+        "ParallelAgent",
+        "SequentialAgent"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseAgent",
+      "type": null,
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 1,
+      "constructor_params": false
+    },
+    "descricao_processada": "LoopAgent classe do Google ADK para executar sub-agentes em um ciclo repetitivo até que ocorra escalação ou o limite máximo de iterações seja atingido. Parte do módulo agents, que contém as diferentes arquiteturas de agentes disponíveis. Herda de BaseAgent e trabalha em conjunto com LlmAgent, ParallelAgent, SequentialAgent. É usado para criar fluxos de conversação que precisam repetir uma sequência de agentes até resolver completamente um problema ou atingir uma condição de parada. Campo principal: max_iterations define o número máximo de ciclos (se não definido, executa indefinidamente até escalação). Erros comuns incluem: 'loop infinito sem escalação (infinite loop without escalation)', 'máximo de iterações atingido (max iterations reached)', 'sub-agente não configurado (sub-agent not configured)'. Sintomas típicos são: o agente nunca para de executar, timeout na conversa, mensagem de limite de iterações excedido, comportamento repetitivo sem progresso. Para solucionar, sempre defina max_iterations para evitar loops infinitos e configure adequadamente as condições de escalação nos sub-agentes. Busque por este componente se encontrar problemas com agentes em loop, execução repetitiva, controle de fluxo cíclico, iteração de agentes, loop control."
+  },
+  {
+    "id": "google.adk.agents.ParallelAgent",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "ParallelAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in parallel in isolated manner. Useful for multiple perspectives or attempts on a single task."
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "ParallelAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in parallel in isolated manner. Useful for multiple perspectives or attempts on a single task.",
+        "base_class": "BaseAgent"
+      },
+      "sibling_classes": [
+        "BaseAgent",
+        "LlmAgent",
+        "LoopAgent",
+        "ParallelAgent",
+        "SequentialAgent"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseAgent",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "ParallelAgent classe do Google ADK para executar múltiplos sub-agentes simultaneamente de forma isolada. Parte do módulo agents, que contém as classes de agentes principais do framework. Herda de BaseAgent e trabalha em conjunto com LlmAgent, SequentialAgent, LoopAgent. É usado para obter múltiplas perspectivas sobre uma mesma tarefa, executar tentativas paralelas de resolução ou processar dados com diferentes abordagens simultaneamente. Útil para cenários como análise comparativa, validação cruzada ou backup de estratégias. Erros comuns incluem: 'sub-agente falhou (sub-agent failed)', 'execução paralela travou (parallel execution stuck)', 'conflito de recursos (resource conflict)', 'timeout na execução paralela (parallel execution timeout)'. Sintomas típicos são: alguns sub-agentes não respondem, execução fica pendente indefinidamente, resultados inconsistentes entre execuções, uso excessivo de recursos do sistema. Para solucionar, verifique se os sub-agentes são independentes, monitore timeouts e garanta que não há dependências compartilhadas entre eles. Busque por este componente se encontrar problemas com execução simultânea, processamento paralelo, múltiplas perspectivas, agentes concorrentes, paralelização de tarefas."
+  },
+  {
+    "id": "google.adk.agents.SequentialAgent",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "SequentialAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in sequence"
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "SequentialAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in sequence",
+        "base_class": "BaseAgent"
+      },
+      "sibling_classes": [
+        "BaseAgent",
+        "LlmAgent",
+        "LoopAgent",
+        "ParallelAgent",
+        "SequentialAgent"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseAgent",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "SequentialAgent classe do Google ADK para executar múltiplos sub-agentes em sequência ordenada. Parte do módulo agents, que fornece diferentes tipos de agentes para orquestração de tarefas. Herda de BaseAgent e trabalha em conjunto com LlmAgent, LoopAgent, ParallelAgent. É usado para criar fluxos de trabalho onde cada agente deve executar após o anterior terminar, passando resultados em cadeia. Funciona como um agente orquestrador que coordena a execução sequencial de outros agentes. Erros comuns incluem: 'sub-agente falhou (sub-agent failed)', 'sequência interrompida (sequence interrupted)', 'resultado não passado corretamente (result not passed correctly)'. Sintomas típicos são: execução para no meio da sequência, resultados de um agente não chegam ao próximo, timeout em fluxos longos, ordem de execução incorreta. Para solucionar, verifique se todos os sub-agentes estão configurados corretamente e se a cadeia de dependências está bem definida. Busque por este componente se encontrar problemas com orquestração de agentes, fluxo sequencial, pipeline de agentes, execução em cadeia, coordenação de tarefas."
+  },
+  {
+    "id": "google.adk.artifacts.BaseArtifactService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "BaseArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "Abstract base class for artifact services",
+      "methods": [
+        {
+          "method": "save_artifact",
+          "description": "Saves an artifact to storage"
+        },
+        {
+          "method": "load_artifact",
+          "description": "Gets an artifact from storage"
+        },
+        {
+          "method": "list_artifact_keys",
+          "description": "Lists all artifact filenames within a session"
+        },
+        {
+          "method": "list_versions",
+          "description": "Lists all versions of an artifact"
+        },
+        {
+          "method": "delete_artifact",
+          "description": "Deletes an artifact"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "BaseArtifactService",
+      "class_data": {
+        "description": "Abstract base class for artifact services",
+        "type": "abstract",
+        "methods": {
+          "save_artifact": {
+            "description": "Saves an artifact to storage",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str",
+              "artifact": "Part"
+            },
+            "return_type": "int"
+          },
+          "load_artifact": {
+            "description": "Gets an artifact from storage",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str",
+              "version": "Optional[int]"
+            },
+            "return_type": "Optional[Part]"
+          },
+          "list_artifact_keys": {
+            "description": "Lists all artifact filenames within a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "list[str]"
+          },
+          "list_versions": {
+            "description": "Lists all versions of an artifact",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str"
+            },
+            "return_type": "list[int]"
+          },
+          "delete_artifact": {
+            "description": "Deletes an artifact",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str"
+            },
+            "return_type": "None"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseArtifactService",
+        "InMemoryArtifactService",
+        "GcsArtifactService"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 5,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseArtifactService classe abstrata do Google ADK para definir a interface padrão de gerenciamento de artefatos em aplicações de agentes. Parte do módulo artifacts, que controla o armazenamento, versionamento e recuperação de arquivos gerados durante conversas. Trabalha em conjunto com InMemoryArtifactService, GcsArtifactService. É usado como classe base para implementar diferentes estratégias de persistência de artefatos como imagens, documentos, códigos ou qualquer conteúdo criado pelo agente. Métodos principais: save_artifact para salvar artefatos, load_artifact para recuperar, list_artifact_keys para listar arquivos da sessão, list_versions para controle de versão, delete_artifact para remoção. Erros comuns incluem: 'método não implementado (method not implemented)', 'artefato não encontrado (artifact not found)', 'versão inválida (invalid version)', 'falha ao salvar (save failed)'. Sintomas típicos são: NotImplementedError ao tentar usar diretamente a classe base, artefatos não são persistidos entre sessões, arquivos gerados pelo agente desaparecem, erro ao tentar recuperar versões específicas. Para solucionar, sempre use uma implementação concreta como InMemoryArtifactService ou GcsArtifactService, nunca instancie BaseArtifactService diretamente. Busque por este componente se encontrar problemas com persistência de arquivos, armazenamento de conteúdo gerado, versionamento de artefatos, gerenciamento de uploads, storage de sessão."
+  },
+  {
+    "id": "google.adk.artifacts.InMemoryArtifactService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "InMemoryArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "An in-memory implementation of the artifact service",
+      "fields": [
+        {
+          "field": "artifacts",
+          "description": "In-memory storage for artifacts"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "InMemoryArtifactService",
+      "class_data": {
+        "description": "An in-memory implementation of the artifact service",
+        "base_class": "BaseArtifactService",
+        "fields": {
+          "artifacts": {
+            "type": "dict[str, list[Part]]",
+            "description": "In-memory storage for artifacts"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseArtifactService",
+        "InMemoryArtifactService",
+        "GcsArtifactService"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseArtifactService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 1,
+      "constructor_params": false
+    },
+    "descricao_processada": "InMemoryArtifactService classe do Google ADK para gerenciar artefatos (arquivos, imagens, documentos) armazenados temporariamente na memória RAM. Parte do módulo artifacts, que fornece diferentes estratégias de armazenamento para conteúdo gerado ou processado por agentes. Herda de BaseArtifactService e trabalha em conjunto com GcsArtifactService como alternativa para armazenamento persistente. É usado para desenvolvimento, testes ou cenários onde os artefatos não precisam ser mantidos após o encerramento da aplicação. Campo principal: artifacts (dict) que mantém o mapeamento de identificadores para listas de objetos Part. Erros comuns incluem: 'artefato perdido após reinicialização (artifact lost after restart)', 'memória insuficiente (out of memory)', 'artefato não encontrado (artifact not found)'. Sintomas típicos são: arquivos gerados desaparecem quando a aplicação é reiniciada, erro de memória ao processar muitos artefatos grandes, perda de dados entre sessões. Para solucionar, considere migrar para GcsArtifactService para persistência ou implemente limpeza periódica da memória. Busque por este componente se encontrar problemas com armazenamento temporário, gerenciamento de arquivos em memória, artifact storage, perda de dados, memory storage."
+  },
+  {
+    "id": "google.adk.artifacts.GcsArtifactService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "GcsArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "An artifact service implementation using Google Cloud Storage (GCS)"
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "GcsArtifactService",
+      "class_data": {
+        "description": "An artifact service implementation using Google Cloud Storage (GCS)",
+        "base_class": "BaseArtifactService",
+        "constructor_params": {
+          "bucket_name": "str",
+          "**kwargs": "Keyword arguments for GCS client"
+        }
+      },
+      "sibling_classes": [
+        "BaseArtifactService",
+        "InMemoryArtifactService",
+        "GcsArtifactService"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseArtifactService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "GcsArtifactService classe do Google ADK para gerenciar artefatos usando Google Cloud Storage (GCS) como backend de armazenamento. Parte do módulo artifacts, que fornece serviços de gerenciamento de arquivos e dados para agentes. Herda de BaseArtifactService e trabalha em conjunto com InMemoryArtifactService. É usado para armazenar e recuperar arquivos, documentos, imagens e outros dados que os agentes precisam acessar de forma persistente na nuvem. Requer bucket_name como parâmetro obrigatório no construtor. Erros comuns incluem: 'bucket não encontrado (bucket not found)', 'credenciais inválidas (invalid credentials)', 'permissões insuficientes (insufficient permissions)', 'falha na autenticação GCS (GCS authentication failed)'. Sintomas típicos são: erro 403 Forbidden ao tentar acessar o bucket, timeout ao fazer upload de arquivos, mensagem 'The specified bucket does not exist', falha ao inicializar o serviço. Para solucionar, verifique se o bucket existe no GCS, se as credenciais estão configuradas corretamente e se o projeto tem as permissões necessárias. Busque por este componente se encontrar problemas com armazenamento de arquivos, upload para nuvem, persistência de artefatos, Google Cloud Storage, gerenciamento de documentos."
+  },
+  {
+    "id": "google.adk.code_executors.BaseCodeExecutor",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "BaseCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "Abstract base class for all code executors",
+      "methods": [
+        {
+          "method": "execute_code",
+          "description": "Executes code and returns result"
+        }
+      ],
+      "fields": [
+        {
+          "field": "optimize_data_file",
+          "description": "If true, extract and process data files from model request. Supports text/csv."
+        },
+        {
+          "field": "stateful",
+          "description": "Whether the code executor is stateful"
+        },
+        {
+          "field": "error_retry_attempts",
+          "description": "Number of retry attempts on consecutive code execution errors"
+        },
+        {
+          "field": "code_block_delimiters",
+          "description": "Enclosing delimiters to identify code blocks"
+        },
+        {
+          "field": "execution_result_delimiters",
+          "description": "Delimiters to format code execution result"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "BaseCodeExecutor",
+      "class_data": {
+        "description": "Abstract base class for all code executors",
+        "type": "pydantic_model",
+        "fields": {
+          "optimize_data_file": {
+            "type": "bool",
+            "default": false,
+            "description": "If true, extract and process data files from model request. Supports text/csv."
+          },
+          "stateful": {
+            "type": "bool",
+            "default": false,
+            "description": "Whether the code executor is stateful"
+          },
+          "error_retry_attempts": {
+            "type": "int",
+            "default": 2,
+            "description": "Number of retry attempts on consecutive code execution errors"
+          },
+          "code_block_delimiters": {
+            "type": "List[tuple[str, str]]",
+            "default": [
+              [
+                "```tool_code\\n",
+                "\\n```"
+              ],
+              [
+                "```python\\n",
+                "\\n```"
+              ]
+            ],
+            "description": "Enclosing delimiters to identify code blocks"
+          },
+          "execution_result_delimiters": {
+            "type": "tuple[str, str]",
+            "default": [
+              "```tool_output\\n",
+              "\\n```"
+            ],
+            "description": "Delimiters to format code execution result"
+          }
+        },
+        "methods": {
+          "execute_code": {
+            "description": "Executes code and returns result",
+            "parameters": {
+              "invocation_context": "InvocationContext",
+              "code_execution_input": "CodeExecutionInput"
+            },
+            "return_type": "CodeExecutionResult",
+            "abstract": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseCodeExecutor",
+        "UnsafeLocalCodeExecutor",
+        "ContainerCodeExecutor",
+        "VertexAiCodeExecutor"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 1,
+      "field_count": 5,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseCodeExecutor classe abstrata do Google ADK para definir a interface base de executores de código. Parte do módulo code_executors, que fornece funcionalidades para execução segura de código gerado por agentes. Trabalha em conjunto com UnsafeLocalCodeExecutor, ContainerCodeExecutor, VertexAiCodeExecutor. É usado como classe base para implementar diferentes estratégias de execução de código Python, desde execução local até containers isolados. Método principal: execute_code que processa código e retorna resultados. Campos configuráveis incluem stateful para manter estado entre execuções, error_retry_attempts para tentativas de reexecução, optimize_data_file para processar arquivos CSV, e delimitadores para identificar blocos de código. Erros comuns incluem: 'método abstrato não implementado (abstract method not implemented)', 'código não encontrado nos delimitadores (code not found in delimiters)', 'falha na execução após tentativas (execution failed after retries)'. Sintomas típicos são: NotImplementedError ao tentar usar diretamente a classe base, código não é executado mesmo sendo válido, arquivos CSV não são processados automaticamente. Para solucionar, sempre use uma implementação concreta como UnsafeLocalCodeExecutor ou ContainerCodeExecutor, verifique os delimitadores de código e configure error_retry_attempts adequadamente. Busque por este componente se encontrar problemas com execução de código, code execution, interpretador Python, sandbox de código, processamento de arquivos de dados."
+  },
+  {
+    "id": "google.adk.code_executors.UnsafeLocalCodeExecutor",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "UnsafeLocalCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that unsafely executes code in the current local context"
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "UnsafeLocalCodeExecutor",
+      "class_data": {
+        "description": "A code executor that unsafely executes code in the current local context",
+        "base_class": "BaseCodeExecutor"
+      },
+      "sibling_classes": [
+        "BaseCodeExecutor",
+        "UnsafeLocalCodeExecutor",
+        "ContainerCodeExecutor",
+        "VertexAiCodeExecutor"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseCodeExecutor",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "UnsafeLocalCodeExecutor classe do Google ADK para executar código Python diretamente no contexto local sem isolamento de segurança. Parte do módulo code_executors, que fornece diferentes estratégias de execução de código para agentes. Herda de BaseCodeExecutor e trabalha em conjunto com ContainerCodeExecutor, VertexAiCodeExecutor. É usado quando você precisa que o agente execute código Python com acesso completo ao ambiente local, incluindo variáveis, módulos e sistema de arquivos. Ideal para desenvolvimento e prototipagem rápida, mas inadequado para produção. Erros comuns incluem: 'execução de código falhou (code execution failed)', 'acesso negado ao sistema (permission denied)', 'módulo não encontrado (module not found)', 'variável não definida (variable not defined)'. Sintomas típicos são: código malicioso pode afetar o sistema, erros de segurança, execução lenta por falta de isolamento, conflitos com o ambiente Python principal. Para solucionar, considere migrar para ContainerCodeExecutor ou VertexAiCodeExecutor em produção, verifique permissões de sistema e dependências instaladas. Busque por este componente se encontrar problemas com execução de código local, code execution, ambiente de desenvolvimento, execução insegura, código Python dinâmico."
+  },
+  {
+    "id": "google.adk.code_executors.ContainerCodeExecutor",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "ContainerCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that uses a custom container to execute code",
+      "fields": [
+        {
+          "field": "base_url",
+          "description": "Base URL of user hosted Docker client"
+        },
+        {
+          "field": "image",
+          "description": "Tag of predefined or custom image to run on container"
+        },
+        {
+          "field": "docker_path",
+          "description": "Path to directory containing Dockerfile"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "ContainerCodeExecutor",
+      "class_data": {
+        "description": "A code executor that uses a custom container to execute code",
+        "base_class": "BaseCodeExecutor",
+        "fields": {
+          "base_url": {
+            "type": "Optional[str]",
+            "default": null,
+            "description": "Base URL of user hosted Docker client"
+          },
+          "image": {
+            "type": "str",
+            "description": "Tag of predefined or custom image to run on container"
+          },
+          "docker_path": {
+            "type": "str",
+            "description": "Path to directory containing Dockerfile"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseCodeExecutor",
+        "UnsafeLocalCodeExecutor",
+        "ContainerCodeExecutor",
+        "VertexAiCodeExecutor"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseCodeExecutor",
+      "type": null,
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 3,
+      "constructor_params": false
+    },
+    "descricao_processada": "ContainerCodeExecutor classe do Google ADK para executar código Python em containers Docker isolados e seguros. Parte do módulo code_executors, que oferece diferentes estratégias de execução de código para agentes. Herda de BaseCodeExecutor e trabalha em conjunto com UnsafeLocalCodeExecutor, VertexAiCodeExecutor. É usado para executar código gerado por agentes em um ambiente containerizado, garantindo isolamento e segurança. Campos principais: base_url para especificar URL do cliente Docker customizado, image para definir a imagem Docker a ser usada, docker_path para apontar o diretório contendo o Dockerfile. Erros comuns incluem: 'Docker não encontrado (Docker not found)', 'imagem não existe (image does not exist)', 'falha ao conectar com Docker daemon (failed to connect to Docker daemon)', 'Dockerfile não encontrado (Dockerfile not found)', 'permissão negada para Docker (permission denied for Docker)'. Sintomas típicos são: código não executa e retorna erro de conexão, timeout durante execução, erro 'docker command not found', falha na criação do container. Para solucionar, verifique se Docker está instalado e rodando, se o usuário tem permissões para usar Docker, se a imagem especificada existe localmente ou no registry, e se o caminho do Dockerfile está correto. Busque por este componente se encontrar problemas com execução de código em container, isolamento de código, Docker executor, ambiente seguro para código, containerização de execução."
+  },
+  {
+    "id": "google.adk.code_executors.VertexAiCodeExecutor",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "VertexAiCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that uses Vertex Code Interpreter Extension",
+      "fields": [
+        {
+          "field": "resource_name",
+          "description": "Resource name of code interpreter extension. Format: projects/123/locations/us-central1/extensions/456"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "VertexAiCodeExecutor",
+      "class_data": {
+        "description": "A code executor that uses Vertex Code Interpreter Extension",
+        "base_class": "BaseCodeExecutor",
+        "fields": {
+          "resource_name": {
+            "type": "str",
+            "description": "Resource name of code interpreter extension. Format: projects/123/locations/us-central1/extensions/456"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseCodeExecutor",
+        "UnsafeLocalCodeExecutor",
+        "ContainerCodeExecutor",
+        "VertexAiCodeExecutor"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseCodeExecutor",
+      "type": null,
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 1,
+      "constructor_params": false
+    },
+    "descricao_processada": "VertexAiCodeExecutor classe do Google ADK para executar código Python usando a extensão Vertex Code Interpreter do Google Cloud. Parte do módulo code_executors, que fornece diferentes estratégias para execução segura de código gerado por agentes. Herda de BaseCodeExecutor e trabalha em conjunto com UnsafeLocalCodeExecutor, ContainerCodeExecutor. É usado para permitir que agentes executem código Python de forma segura na nuvem, especialmente útil para análise de dados, cálculos matemáticos e processamento de arquivos. Requer configuração do campo resource_name no formato 'projects/123/locations/us-central1/extensions/456'. Erros comuns incluem: 'recurso não encontrado (resource not found)', 'permissões insuficientes (insufficient permissions)', 'formato de resource_name inválido (invalid resource_name format)', 'extensão não habilitada (extension not enabled)'. Sintomas típicos são: código não executa e retorna erro 404, falha de autenticação ao tentar usar o executor, mensagem 'The extension does not exist', timeout na execução de código. Para solucionar, verifique se o resource_name está correto, se a extensão Vertex Code Interpreter está habilitada no projeto e se as credenciais têm as permissões necessárias. Busque por este componente se encontrar problemas com execução de código na nuvem, Vertex AI, code interpreter, execução segura de Python, análise de dados por agentes."
+  },
+  {
+    "id": "google.adk.evaluation.AgentEvaluator",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.evaluation",
+      "class": "AgentEvaluator"
+    },
+    "descriptions": {
+      "module": "Module for agent evaluation functionality",
+      "class": "An evaluator for Agents, mainly intended for helping with test cases",
+      "methods": [
+        {
+          "method": "evaluate",
+          "description": "Evaluates an Agent given eval data"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.evaluation",
+      "module_description": "Module for agent evaluation functionality",
+      "class_name": "AgentEvaluator",
+      "class_data": {
+        "description": "An evaluator for Agents, mainly intended for helping with test cases",
+        "methods": {
+          "evaluate": {
+            "description": "Evaluates an Agent given eval data",
+            "parameters": {
+              "agent_module": "str - Path to python module containing agent",
+              "eval_dataset_file_path_or_dir": "str - Path to eval dataset file or directory",
+              "num_runs": "int = 2",
+              "agent_name": "Optional[str]",
+              "initial_session_file": "Optional[str]"
+            },
+            "static": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "AgentEvaluator"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 1,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "AgentEvaluator classe do Google ADK para avaliar e testar o desempenho de agentes de forma automatizada. Parte do módulo evaluation, que fornece ferramentas para validação e testes de qualidade de agentes. É usado principalmente para criar casos de teste, executar avaliações em lote e medir a performance de agentes em diferentes cenários. Método principal: evaluate que executa a avaliação de um agente usando um dataset de teste, com parâmetros como caminho do módulo do agente (agent_module), arquivo ou diretório do dataset (eval_dataset_file_path_or_dir), número de execuções (num_runs) e nome do agente (agent_name). Erros comuns incluem: 'módulo do agente não encontrado (agent module not found)', 'dataset inválido (invalid dataset)', 'falha na avaliação (evaluation failed)', 'arquivo de sessão inicial não encontrado (initial session file not found)'. Sintomas típicos são: erro de importação do módulo do agente, falha ao carregar o dataset de avaliação, resultados inconsistentes entre execuções, timeout durante a avaliação. Para solucionar, verifique se o caminho do módulo está correto, se o dataset está no formato esperado e se o agente pode ser instanciado corretamente. Busque por este componente se encontrar problemas com testes automatizados, validação de agente, avaliação de performance, casos de teste, quality assurance, benchmarking de agentes."
+  },
+  {
+    "id": "google.adk.events.Event",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.events",
+      "class": "Event"
+    },
+    "descriptions": {
+      "module": "Module for event handling",
+      "class": "Represents an event in a conversation between agents and users",
+      "methods": [
+        {
+          "method": "get_function_calls",
+          "description": "Returns the function calls in the event"
+        },
+        {
+          "method": "get_function_responses",
+          "description": "Returns the function responses in the event"
+        },
+        {
+          "method": "is_final_response",
+          "description": "Returns whether the event is the final response"
+        }
+      ],
+      "fields": [
+        {
+          "field": "invocation_id",
+          "description": "The invocation ID of the event"
+        },
+        {
+          "field": "author",
+          "description": "'user' or agent name, indicating who appended the event"
+        },
+        {
+          "field": "actions",
+          "description": "The actions taken by the agent"
+        },
+        {
+          "field": "long_running_tool_ids",
+          "description": "IDs of long running function calls"
+        },
+        {
+          "field": "branch",
+          "description": "The branch of the event (e.g., agent_1.agent_2.agent_3)"
+        },
+        {
+          "field": "id",
+          "description": "Unique identifier of the event"
+        },
+        {
+          "field": "timestamp",
+          "description": "Timestamp of the event"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.events",
+      "module_description": "Module for event handling",
+      "class_name": "Event",
+      "class_data": {
+        "description": "Represents an event in a conversation between agents and users",
+        "base_class": "LlmResponse",
+        "type": "pydantic_model",
+        "fields": {
+          "invocation_id": {
+            "type": "str",
+            "default": "",
+            "description": "The invocation ID of the event"
+          },
+          "author": {
+            "type": "str",
+            "required": true,
+            "description": "'user' or agent name, indicating who appended the event"
+          },
+          "actions": {
+            "type": "EventActions",
+            "description": "The actions taken by the agent"
+          },
+          "long_running_tool_ids": {
+            "type": "Optional[set[str]]",
+            "description": "IDs of long running function calls"
+          },
+          "branch": {
+            "type": "Optional[str]",
+            "description": "The branch of the event (e.g., agent_1.agent_2.agent_3)"
+          },
+          "id": {
+            "type": "str",
+            "default": "",
+            "description": "Unique identifier of the event"
+          },
+          "timestamp": {
+            "type": "float",
+            "description": "Timestamp of the event"
+          }
+        },
+        "methods": {
+          "get_function_calls": {
+            "description": "Returns the function calls in the event",
+            "return_type": "list[FunctionCall]"
+          },
+          "get_function_responses": {
+            "description": "Returns the function responses in the event",
+            "return_type": "list[FunctionResponse]"
+          },
+          "is_final_response": {
+            "description": "Returns whether the event is the final response",
+            "return_type": "bool"
+          }
+        }
+      },
+      "sibling_classes": [
+        "Event",
+        "EventActions"
+      ]
+    },
+    "metadata": {
+      "base_class": "LlmResponse",
+      "type": "pydantic_model",
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 3,
+      "field_count": 7,
+      "constructor_params": false
+    },
+    "descricao_processada": "Event classe do Google ADK para representar um evento individual em uma conversa entre agentes e usuários. Parte do módulo events, que gerencia o fluxo de eventos e ações durante conversas. Herda de LlmResponse e trabalha em conjunto com EventActions. É usado para capturar e rastrear cada interação, incluindo mensagens do usuário, respostas do agente, chamadas de função e execuções de ferramentas. Campos principais: author indica quem criou o evento ('user' ou nome do agente), actions contém as ações executadas, branch mostra a hierarquia de agentes (e.g., 'agent_1.agent_2.agent_3'), timestamp marca o momento do evento. Métodos principais: get_function_calls retorna chamadas de função no evento, get_function_responses retorna respostas de função, is_final_response verifica se é a resposta final. Erros comuns incluem: 'author field required', 'evento sem timestamp (event without timestamp)', 'branch inválido (invalid branch)', 'ações não encontradas (actions not found)'. Sintomas típicos são: eventos aparecem fora de ordem, histórico de conversa incompleto, falha ao rastrear qual agente executou uma ação, problemas com ferramentas de longa duração não sendo monitoradas. Para solucionar, verifique se o campo author está definido corretamente e se o timestamp está sendo gerado. Busque por este componente se encontrar problemas com histórico de conversa, rastreamento de eventos, fluxo de mensagens, log de interações, event tracking, conversation history."
+  },
+  {
+    "id": "google.adk.events.EventActions",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.events",
+      "class": "EventActions"
+    },
+    "descriptions": {
+      "module": "Module for event handling",
+      "class": "Represents the actions attached to an event",
+      "fields": [
+        {
+          "field": "skip_summarization",
+          "description": "If true, won't call model to summarize function response"
+        },
+        {
+          "field": "state_delta",
+          "description": "Updates state with given delta"
+        },
+        {
+          "field": "artifact_delta",
+          "description": "Updates artifact. Key is filename, value is version."
+        },
+        {
+          "field": "transfer_to_agent",
+          "description": "If set, transfers to specified agent"
+        },
+        {
+          "field": "escalate",
+          "description": "Agent is escalating to higher level agent"
+        },
+        {
+          "field": "requested_auth_configs",
+          "description": "Authentication configurations requested by tool responses"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.events",
+      "module_description": "Module for event handling",
+      "class_name": "EventActions",
+      "class_data": {
+        "description": "Represents the actions attached to an event",
+        "type": "pydantic_model",
+        "fields": {
+          "skip_summarization": {
+            "type": "Optional[bool]",
+            "description": "If true, won't call model to summarize function response"
+          },
+          "state_delta": {
+            "type": "dict[str, object]",
+            "description": "Updates state with given delta"
+          },
+          "artifact_delta": {
+            "type": "dict[str, int]",
+            "description": "Updates artifact. Key is filename, value is version."
+          },
+          "transfer_to_agent": {
+            "type": "Optional[str]",
+            "description": "If set, transfers to specified agent"
+          },
+          "escalate": {
+            "type": "Optional[bool]",
+            "description": "Agent is escalating to higher level agent"
+          },
+          "requested_auth_configs": {
+            "type": "dict[str, AuthConfig]",
+            "description": "Authentication configurations requested by tool responses"
+          }
+        }
+      },
+      "sibling_classes": [
+        "Event",
+        "EventActions"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 6,
+      "constructor_params": false
+    },
+    "descricao_processada": "EventActions classe do Google ADK para definir ações que devem ser executadas em resposta a eventos durante a execução de agentes. Parte do módulo events, que gerencia o sistema de eventos e reações automáticas do framework. Trabalha em conjunto com Event e outros componentes do sistema de eventos. É usado para configurar comportamentos automáticos como pular sumarização de respostas (skip_summarization), atualizar estado da sessão (state_delta), modificar artefatos (artifact_delta), transferir controle para outro agente (transfer_to_agent), escalar para agente de nível superior (escalate) e gerenciar configurações de autenticação (requested_auth_configs). Campos principais: skip_summarization para otimizar performance, state_delta para persistir dados, transfer_to_agent para roteamento entre agentes. Erros comuns incluem: 'ação não executada (action not executed)', 'transferência falhou (transfer failed)', 'estado não atualizado (state not updated)', 'escalation failed'. Sintomas típicos são: agente não transfere controle corretamente, estado não persiste entre eventos, sumarização acontece quando deveria ser pulada, autenticação não é solicitada adequadamente. Para solucionar, verifique se os campos estão sendo definidos corretamente no evento e se os agentes de destino existem para transferências. Busque por este componente se encontrar problemas com automação de eventos, transferência entre agentes, escalation, controle de fluxo, event-driven behavior, ações automáticas."
+  },
+  {
+    "id": "google.adk.examples.Example",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "Example"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "A few-shot example",
+      "fields": [
+        {
+          "field": "input",
+          "description": "The input content for the example"
+        },
+        {
+          "field": "output",
+          "description": "The expected output content for the example"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "Example",
+      "class_data": {
+        "description": "A few-shot example",
+        "type": "pydantic_model",
+        "fields": {
+          "input": {
+            "type": "Content",
+            "required": true,
+            "description": "The input content for the example"
+          },
+          "output": {
+            "type": "list[Content]",
+            "required": true,
+            "description": "The expected output content for the example"
+          }
+        }
+      },
+      "sibling_classes": [
+        "Example",
+        "BaseExampleProvider",
+        "VertexAiExampleStore"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 2,
+      "constructor_params": false
+    },
+    "descricao_processada": "Example classe do Google ADK para representar um exemplo de few-shot learning com entrada e saída esperada. Parte do módulo examples, que gerencia exemplos para treinar e orientar o comportamento de agentes. Trabalha em conjunto com BaseExampleProvider, VertexAiExampleStore. É usado para criar pares de input-output que demonstram ao agente como responder em situações específicas, melhorando a qualidade das respostas através de aprendizado por exemplos. Campos principais: input (Content) para o conteúdo de entrada do exemplo, output (list[Content]) para a lista de respostas esperadas. Erros comuns incluem: 'campo obrigatório ausente (missing required field)', 'tipo de conteúdo inválido (invalid content type)', 'exemplo malformado (malformed example)'. Sintomas típicos são: agente não aprende com os exemplos fornecidos, erro de validação ao criar o exemplo, comportamento inconsistente do agente mesmo com exemplos. Para solucionar, verifique se os campos input e output estão preenchidos corretamente e se o tipo Content está sendo usado adequadamente. Busque por este componente se encontrar problemas com few-shot learning, exemplos de treinamento, melhoria de respostas do agente, aprendizado por demonstração, prompt engineering."
+  },
+  {
+    "id": "google.adk.examples.BaseExampleProvider",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "BaseExampleProvider"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "Base class for example providers"
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "BaseExampleProvider",
+      "class_data": {
+        "description": "Base class for example providers",
+        "type": "abstract"
+      },
+      "sibling_classes": [
+        "Example",
+        "BaseExampleProvider",
+        "VertexAiExampleStore"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseExampleProvider classe abstrata do Google ADK para definir a interface padrão de provedores de exemplos para agentes. Parte do módulo examples, que gerencia exemplos e casos de uso para treinamento e referência de agentes. Trabalha em conjunto com Example, VertexAiExampleStore. É usado como classe base para implementar diferentes fontes de exemplos, como bancos de dados, arquivos ou APIs externas. Por ser abstrata, não pode ser instanciada diretamente e deve ser herdada por classes concretas como VertexAiExampleStore. Erros comuns incluem: 'não é possível instanciar classe abstrata (cannot instantiate abstract class)', 'método não implementado (method not implemented)', 'provedor de exemplos não configurado (example provider not configured)'. Sintomas típicos são: erro TypeError ao tentar criar uma instância direta, NotImplementedError quando métodos abstratos não são sobrescritos na classe filha, agente não consegue acessar exemplos de referência. Para solucionar, sempre herde desta classe e implemente todos os métodos abstratos necessários, ou use uma implementação concreta como VertexAiExampleStore. Busque por este componente se encontrar problemas com gerenciamento de exemplos, fonte de dados para agentes, implementação de provedores customizados, abstract class, base provider."
+  },
+  {
+    "id": "google.adk.examples.VertexAiExampleStore",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "VertexAiExampleStore"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "Provides examples from Vertex example store"
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "VertexAiExampleStore",
+      "class_data": {
+        "description": "Provides examples from Vertex example store",
+        "base_class": "BaseExampleProvider",
+        "constructor_params": {
+          "examples_store_name": "str - Format: projects/{project}/locations/{location}/exampleStores/{example_store}"
+        }
+      },
+      "sibling_classes": [
+        "Example",
+        "BaseExampleProvider",
+        "VertexAiExampleStore"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseExampleProvider",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "VertexAiExampleStore classe do Google ADK para conectar agentes a um repositório de exemplos armazenado no Vertex AI. Parte do módulo examples, que gerencia exemplos e casos de uso para treinamento e referência de agentes. Herda de BaseExampleProvider e trabalha em conjunto com Example e outras implementações de provedores de exemplo. É usado para fornecer exemplos contextuais aos agentes a partir de um example store configurado no Google Cloud Vertex AI. Requer o parâmetro examples_store_name no formato 'projects/{project}/locations/{location}/exampleStores/{example_store}'. Erros comuns incluem: 'formato de nome inválido (invalid name format)', 'example store não encontrado (example store not found)', 'permissões insuficientes (insufficient permissions)', 'falha na autenticação do Vertex AI (Vertex AI authentication failed)'. Sintomas típicos são: erro de formato ao instanciar a classe, falha na conexão com o Vertex AI, exemplos não são carregados ou retornados vazios, mensagens de erro relacionadas a credenciais do Google Cloud. Para solucionar, verifique se o formato do nome do example store está correto, se as credenciais do Google Cloud estão configuradas e se o projeto tem acesso ao Vertex AI. Busque por este componente se encontrar problemas com repositório de exemplos, integração Vertex AI, example store, provedores de exemplo, treinamento de agente."
+  },
+  {
+    "id": "google.adk.memory.BaseMemoryService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "BaseMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "Base class for memory services",
+      "methods": [
+        {
+          "method": "add_session_to_memory",
+          "description": "Adds a session to the memory service"
+        },
+        {
+          "method": "search_memory",
+          "description": "Searches for sessions that match the query"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "BaseMemoryService",
+      "class_data": {
+        "description": "Base class for memory services",
+        "type": "abstract",
+        "methods": {
+          "add_session_to_memory": {
+            "description": "Adds a session to the memory service",
+            "parameters": {
+              "session": "Session"
+            },
+            "return_type": "None",
+            "abstract": true
+          },
+          "search_memory": {
+            "description": "Searches for sessions that match the query",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "query": "str"
+            },
+            "return_type": "SearchMemoryResponse",
+            "abstract": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseMemoryService",
+        "InMemoryMemoryService",
+        "VertexAiRagMemoryService"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 2,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseMemoryService classe abstrata do Google ADK para definir a interface padrão de serviços de memória de agentes. Parte do módulo memory, que gerencia a persistência e recuperação de conversas históricas. Trabalha em conjunto com InMemoryMemoryService, VertexAiRagMemoryService e Session. É usado como classe base para implementar diferentes estratégias de armazenamento de memória, permitindo que agentes lembrem de conversas anteriores e contexto histórico. Métodos principais: add_session_to_memory para armazenar uma sessão na memória, search_memory para buscar conversas que correspondem a uma consulta específica. Erros comuns incluem: 'método abstrato não implementado (abstract method not implemented)', 'serviço de memória não configurado (memory service not configured)', 'falha na busca de memória (memory search failed)'. Sintomas típicos são: NotImplementedError ao tentar usar diretamente a classe base, o agente não consegue acessar conversas anteriores, buscas por contexto histórico retornam vazias. Para solucionar, sempre use uma implementação concreta como InMemoryMemoryService ou VertexAiRagMemoryService, nunca instancie BaseMemoryService diretamente. Busque por este componente se encontrar problemas com memória do agente, histórico de conversas, persistência de contexto, RAG memory, lembrança de sessões anteriores."
+  },
+  {
+    "id": "google.adk.memory.InMemoryMemoryService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "InMemoryMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "An in-memory memory service for prototyping. Uses keyword matching instead of semantic search."
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "InMemoryMemoryService",
+      "class_data": {
+        "description": "An in-memory memory service for prototyping. Uses keyword matching instead of semantic search.",
+        "base_class": "BaseMemoryService"
+      },
+      "sibling_classes": [
+        "BaseMemoryService",
+        "InMemoryMemoryService",
+        "VertexAiRagMemoryService"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseMemoryService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "InMemoryMemoryService classe do Google ADK para gerenciar memória de agentes usando armazenamento temporário em RAM com busca por palavras-chave. Parte do módulo memory, que fornece diferentes estratégias de persistência e recuperação de informações para agentes. Herda de BaseMemoryService e trabalha em conjunto com VertexAiRagMemoryService. É usado principalmente para prototipagem e desenvolvimento local, onde não há necessidade de persistência permanente ou busca semântica avançada. Utiliza correspondência simples de palavras-chave ao invés de busca semântica vetorial. Erros comuns incluem: 'memória perdida ao reiniciar (memory lost on restart)', 'busca por palavra-chave não encontra resultados (keyword search returns no results)', 'limite de memória excedido (memory limit exceeded)'. Sintomas típicos são: informações são perdidas quando a aplicação é reiniciada, buscas por sinônimos ou conceitos relacionados falham, performance degrada com grandes volumes de dados na memória. Para solucionar, considere migrar para VertexAiRagMemoryService em produção ou implemente lógica de persistência externa. Busque por este componente se encontrar problemas com memória temporária, prototipagem de agentes, busca por keywords, armazenamento em RAM, desenvolvimento local."
+  },
+  {
+    "id": "google.adk.memory.VertexAiRagMemoryService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "VertexAiRagMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "A memory service that uses Vertex AI RAG for storage and retrieval"
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "VertexAiRagMemoryService",
+      "class_data": {
+        "description": "A memory service that uses Vertex AI RAG for storage and retrieval",
+        "base_class": "BaseMemoryService",
+        "constructor_params": {
+          "rag_corpus": "str - Format: projects/{project}/locations/{location}/ragCorpora/{rag_corpus_id}",
+          "similarity_top_k": "Optional[int]",
+          "vector_distance_threshold": "float = 10"
+        }
+      },
+      "sibling_classes": [
+        "BaseMemoryService",
+        "InMemoryMemoryService",
+        "VertexAiRagMemoryService"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseMemoryService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "VertexAiRagMemoryService classe do Google ADK para implementar memória persistente de agentes usando Vertex AI RAG (Retrieval-Augmented Generation). Parte do módulo memory, que gerencia diferentes tipos de armazenamento e recuperação de memória para agentes conversacionais. Trabalha em conjunto com BaseMemoryService, InMemoryMemoryService. É usado para armazenar e recuperar informações contextuais de conversas usando busca semântica avançada do Vertex AI, permitindo que agentes lembrem de interações passadas de forma inteligente. Parâmetros principais: rag_corpus (ID do corpus RAG no formato projects/{project}/locations/{location}/ragCorpora/{rag_corpus_id}), similarity_top_k (número de resultados similares), vector_distance_threshold (limiar de distância vetorial). Erros comuns incluem: 'corpus RAG não encontrado (RAG corpus not found)', 'credenciais inválidas (invalid credentials)', 'projeto não configurado (project not configured)', 'limite de distância muito restritivo (distance threshold too restrictive)'. Sintomas típicos são: agente não consegue acessar memórias anteriores, erro de autenticação com Vertex AI, nenhum resultado retornado nas buscas de memória, falha na inicialização do serviço. Para solucionar, verifique se o corpus RAG existe no projeto especificado, se as credenciais do Google Cloud estão configuradas e se o threshold de distância não está muito alto. Busque por este componente se encontrar problemas com memória persistente, RAG, Vertex AI integration, busca semântica, contexto de longo prazo, 'memory not working'."
+  },
+  {
+    "id": "google.adk.models.BaseLlm",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "BaseLlm"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "The base LLM class",
+      "methods": [
+        {
+          "method": "supported_models",
+          "description": "Returns list of supported models in regex"
+        },
+        {
+          "method": "connect",
+          "description": "Creates a live connection to the LLM"
+        },
+        {
+          "method": "generate_content_async",
+          "description": "Generates content from given contents and tools"
+        }
+      ],
+      "fields": [
+        {
+          "field": "model",
+          "description": "Name of the LLM (e.g., gemini-1.5-flash)"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "BaseLlm",
+      "class_data": {
+        "description": "The base LLM class",
+        "type": "pydantic_model",
+        "fields": {
+          "model": {
+            "type": "str",
+            "required": true,
+            "description": "Name of the LLM (e.g., gemini-1.5-flash)"
+          }
+        },
+        "methods": {
+          "supported_models": {
+            "description": "Returns list of supported models in regex",
+            "return_type": "list[str]",
+            "static": true
+          },
+          "connect": {
+            "description": "Creates a live connection to the LLM",
+            "parameters": {
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "BaseLlmConnection"
+          },
+          "generate_content_async": {
+            "description": "Generates content from given contents and tools",
+            "parameters": {
+              "llm_request": "LlmRequest",
+              "stream": "bool = False"
+            },
+            "return_type": "AsyncGenerator[LlmResponse, None]",
+            "abstract": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseLlm",
+        "Gemini",
+        "LLMRegistry"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 3,
+      "field_count": 1,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseLlm classe base do Google ADK para definir a interface padrão de modelos de linguagem (LLMs). Parte do módulo models, que gerencia a integração com diferentes provedores de IA como Gemini. Trabalha em conjunto com Gemini, LLMRegistry, BaseLlmConnection, LlmRequest e LlmResponse. É usado como classe pai para implementar conexões com modelos específicos, definindo métodos obrigatórios como generate_content_async. Métodos principais: supported_models retorna lista de modelos suportados em regex, connect cria conexão ativa com o LLM, generate_content_async gera conteúdo de forma assíncrona. Campo model armazena o nome do modelo (ex: 'gemini-1.5-flash'). Erros comuns incluem: 'modelo não suportado (model not supported)', 'conexão falhou (connection failed)', 'método abstrato não implementado (abstract method not implemented)', 'LlmRequest inválido (invalid LlmRequest)'. Sintomas típicos são: erro 'NotImplementedError' ao tentar usar diretamente a classe base, falha na geração de conteúdo, timeout de conexão, modelo especificado não reconhecido. Para solucionar, use uma implementação concreta como Gemini ao invés da classe base, verifique se o nome do modelo está correto e se a conexão de rede está funcionando. Busque por este componente se encontrar problemas com integração de LLM, modelos de IA, geração de texto, conexão com Gemini, interface de modelo."
+  },
+  {
+    "id": "google.adk.models.Gemini",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "Gemini"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "Integration for Gemini models",
+      "fields": [
+        {
+          "field": "model",
+          "description": "Name of the Gemini model"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "Gemini",
+      "class_data": {
+        "description": "Integration for Gemini models",
+        "base_class": "BaseLlm",
+        "fields": {
+          "model": {
+            "type": "str",
+            "default": "gemini-1.5-flash",
+            "description": "Name of the Gemini model"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseLlm",
+        "Gemini",
+        "LLMRegistry"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseLlm",
+      "type": null,
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 1,
+      "constructor_params": false
+    },
+    "descricao_processada": "Gemini classe do Google ADK para integração com modelos de linguagem Gemini do Google. Parte do módulo models, que define interfaces para suporte a diferentes modelos de IA. Herda de BaseLlm e trabalha em conjunto com LLMRegistry para registro e gerenciamento de modelos. É usado para configurar e utilizar modelos Gemini em agentes conversacionais, com campo model para especificar a versão (padrão: gemini-1.5-flash). Erros comuns incluem: 'modelo não encontrado (model not found)', 'credenciais inválidas (invalid credentials)', 'quota excedida (quota exceeded)', 'falha na autenticação (authentication failed)'. Sintomas típicos são: respostas vazias do modelo, erro 404 ao tentar usar o modelo, timeout nas requisições, mensagens sobre API key inválida. Para solucionar, verifique se as credenciais do Google Cloud estão configuradas, se o modelo especificado existe e se há quota disponível na API. Busque por este componente se encontrar problemas com modelos Gemini, integração Google AI, LLM configuration, gemini-1.5-flash, modelo de linguagem, geração de texto."
+  },
+  {
+    "id": "google.adk.models.LLMRegistry",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "LLMRegistry"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "Registry for LLMs",
+      "methods": [
+        {
+          "method": "new_llm",
+          "description": "Creates a new LLM instance"
+        },
+        {
+          "method": "register",
+          "description": "Registers a new LLM class"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "LLMRegistry",
+      "class_data": {
+        "description": "Registry for LLMs",
+        "methods": {
+          "new_llm": {
+            "description": "Creates a new LLM instance",
+            "parameters": {
+              "model": "str"
+            },
+            "return_type": "BaseLlm",
+            "static": true
+          },
+          "register": {
+            "description": "Registers a new LLM class",
+            "parameters": {
+              "llm_cls": "Type[BaseLlm]"
+            },
+            "static": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseLlm",
+        "Gemini",
+        "LLMRegistry"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 2,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "LLMRegistry classe do Google ADK para gerenciar e criar instâncias de modelos de linguagem (LLMs). Parte do módulo models, que define a interface para suporte a diferentes modelos de IA. Trabalha em conjunto com BaseLlm, Gemini e outros modelos registrados. É usado para centralizar a criação de LLMs através do método new_llm que retorna uma instância BaseLlm, e para registrar novos tipos de modelo via register. Métodos principais: new_llm para criar instâncias de modelo baseado em string identificadora, register para adicionar novos tipos de LLM ao registro. Erros comuns incluem: 'modelo não registrado (model not registered)', 'tipo de LLM inválido (invalid LLM type)', 'falha ao criar instância (failed to create instance)', 'classe não herda de BaseLlm (class does not inherit from BaseLlm)'. Sintomas típicos são: KeyError ao tentar criar um modelo específico, TypeError quando o modelo retornado não implementa a interface esperada, AttributeError em métodos do LLM criado. Para solucionar, verifique se o modelo está registrado no registry, se a string do modelo está correta e se a classe implementa BaseLlm corretamente. Busque por este componente se encontrar problemas com criação de modelos, factory pattern, registro de LLM, instanciação de modelo, gerenciamento de tipos de IA."
+  },
+  {
+    "id": "google.adk.planners.BasePlanner",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "BasePlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Abstract base class for all planners",
+      "methods": [
+        {
+          "method": "build_planning_instruction",
+          "description": "Builds system instruction for planning"
+        },
+        {
+          "method": "process_planning_response",
+          "description": "Processes the LLM response for planning"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "BasePlanner",
+      "class_data": {
+        "description": "Abstract base class for all planners",
+        "type": "abstract",
+        "methods": {
+          "build_planning_instruction": {
+            "description": "Builds system instruction for planning",
+            "parameters": {
+              "readonly_context": "ReadonlyContext",
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "Optional[str]",
+            "abstract": true
+          },
+          "process_planning_response": {
+            "description": "Processes the LLM response for planning",
+            "parameters": {
+              "callback_context": "CallbackContext",
+              "response_parts": "List[Part]"
+            },
+            "return_type": "Optional[List[Part]]",
+            "abstract": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BasePlanner",
+        "BuiltInPlanner",
+        "PlanReActPlanner"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 2,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BasePlanner classe abstrata do Google ADK para definir a estrutura base de planejadores de agentes. Parte do módulo planners, que implementa funcionalidades de planejamento e tomada de decisão para agentes conversacionais. Trabalha em conjunto com BuiltInPlanner, PlanReActPlanner e outros planejadores concretos. É usado como classe pai para criar planejadores customizados que definem como o agente processa requisições e planeja suas respostas. Métodos abstratos principais: build_planning_instruction para construir instruções de sistema para o LLM, process_planning_response para processar a resposta do modelo e extrair o plano de ação. Erros comuns incluem: 'método abstrato não implementado (abstract method not implemented)', 'planejador não registrado (planner not registered)', 'instrução de planejamento inválida (invalid planning instruction)'. Sintomas típicos são: TypeError ao tentar instanciar diretamente a classe base, o agente não consegue processar requisições complexas, falhas na geração de planos de ação estruturados. Para solucionar, implemente os métodos abstratos em uma subclasse concreta e registre o planejador no sistema. Busque por este componente se encontrar problemas com planejamento de agentes, arquitetura de planejadores, herança de classes abstratas, customização de comportamento de agente, planning system."
+  },
+  {
+    "id": "google.adk.planners.BuiltInPlanner",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "BuiltInPlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Built-in planner that uses model's built-in thinking features"
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "BuiltInPlanner",
+      "class_data": {
+        "description": "Built-in planner that uses model's built-in thinking features",
+        "base_class": "BasePlanner",
+        "constructor_params": {
+          "thinking_config": "ThinkingConfig"
+        }
+      },
+      "sibling_classes": [
+        "BasePlanner",
+        "BuiltInPlanner",
+        "PlanReActPlanner"
+      ]
+    },
+    "metadata": {
+      "base_class": "BasePlanner",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "BuiltInPlanner classe do Google ADK para planejamento de ações usando recursos nativos de raciocínio do modelo de linguagem. Parte do módulo planners, que implementa estratégias de planejamento e tomada de decisão para agentes. Herda de BasePlanner e trabalha em conjunto com PlanReActPlanner e ThinkingConfig. É usado para permitir que agentes planejem sequências de ações aproveitando as capacidades internas do modelo, sem necessidade de frameworks externos de planejamento. Recebe ThinkingConfig no construtor para configurar o comportamento de raciocínio. Erros comuns incluem: 'configuração de pensamento inválida (invalid thinking config)', 'planner não inicializado (planner not initialized)', 'falha no planejamento interno (internal planning failed)'. Sintomas típicos são: o agente não consegue planejar ações complexas, decisões inconsistentes ou aleatórias, erro ao tentar usar recursos de thinking do modelo. Para solucionar, verifique se ThinkingConfig está corretamente configurado e se o modelo suporta recursos de planejamento interno. Busque por este componente se encontrar problemas com planejamento de agente, thinking nativo, raciocínio interno, estratégia de decisão, planner built-in."
+  },
+  {
+    "id": "google.adk.planners.PlanReActPlanner",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "PlanReActPlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Plan-Re-Act planner that constrains LLM to generate plan before action"
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "PlanReActPlanner",
+      "class_data": {
+        "description": "Plan-Re-Act planner that constrains LLM to generate plan before action",
+        "base_class": "BasePlanner"
+      },
+      "sibling_classes": [
+        "BasePlanner",
+        "BuiltInPlanner",
+        "PlanReActPlanner"
+      ]
+    },
+    "metadata": {
+      "base_class": "BasePlanner",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "PlanReActPlanner classe do Google ADK para forçar o modelo de linguagem a criar um plano estruturado antes de executar ações. Parte do módulo planners, que controla estratégias de planejamento e tomada de decisão dos agentes. Herda de BasePlanner e trabalha em conjunto com BuiltInPlanner. É usado para implementar o padrão Plan-Re-Act onde o agente primeiro planeja (Plan), depois age (Act) e reflete (Re-Act) sobre os resultados antes de continuar. Força uma abordagem mais estruturada em comparação com planejadores que executam ações diretamente. Erros comuns incluem: 'plano não gerado (plan not generated)', 'falha na geração do plano (plan generation failed)', 'planejador não inicializado (planner not initialized)'. Sintomas típicos são: o agente executa ações sem planejamento prévio, comportamento errático ou não estruturado, respostas inconsistentes ou desorganizadas. Para solucionar, verifique se o planejador está corretamente configurado no agente e se o modelo de linguagem suporta geração de planos. Busque por este componente se encontrar problemas com planejamento estruturado, Plan-Re-Act pattern, estratégia de agente, tomada de decisão sequencial, planner configuration."
+  },
+  {
+    "id": "google.adk.runners.Runner",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.runners",
+      "class": "Runner"
+    },
+    "descriptions": {
+      "module": "Module for running agents",
+      "class": "The Runner class manages agent execution within a session",
+      "methods": [
+        {
+          "method": "run",
+          "description": "Runs the agent (sync interface for testing)"
+        },
+        {
+          "method": "run_async",
+          "description": "Main entry method to run agent"
+        },
+        {
+          "method": "run_live",
+          "description": "Runs agent in live mode (experimental)"
+        },
+        {
+          "method": "close_session",
+          "description": "Closes session and adds to memory service"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.runners",
+      "module_description": "Module for running agents",
+      "class_name": "Runner",
+      "class_data": {
+        "description": "The Runner class manages agent execution within a session",
+        "constructor_params": {
+          "app_name": "str",
+          "agent": "BaseAgent",
+          "artifact_service": "Optional[BaseArtifactService]",
+          "session_service": "BaseSessionService",
+          "memory_service": "Optional[BaseMemoryService]"
+        },
+        "methods": {
+          "run": {
+            "description": "Runs the agent (sync interface for testing)",
+            "parameters": {
+              "user_id": "str",
+              "session_id": "str",
+              "new_message": "Message",
+              "run_config": "RunConfig"
+            },
+            "return_type": "Generator[Event, None, None]"
+          },
+          "run_async": {
+            "description": "Main entry method to run agent",
+            "parameters": {
+              "user_id": "str",
+              "session_id": "str",
+              "new_message": "Message",
+              "run_config": "RunConfig"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "run_live": {
+            "description": "Runs agent in live mode (experimental)",
+            "parameters": {
+              "session": "Session",
+              "live_request_queue": "Queue",
+              "run_config": "RunConfig"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "close_session": {
+            "description": "Closes session and adds to memory service",
+            "parameters": {
+              "session": "Session"
+            }
+          }
+        }
+      },
+      "sibling_classes": [
+        "Runner",
+        "InMemoryRunner"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 4,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "Runner classe do Google ADK para gerenciar e executar agentes dentro de sessões de conversa. Parte do módulo runners, que controla a execução e o ciclo de vida dos agentes. Trabalha em conjunto com InMemoryRunner, BaseAgent, BaseSessionService, BaseMemoryService, BaseArtifactService. É usado para iniciar conversas com agentes, processar mensagens do usuário e gerenciar o fluxo de execução. Métodos principais: run_async para execução assíncrona principal, run para interface síncrona de testes, run_live para modo experimental em tempo real, close_session para finalizar sessões. Erros comuns incluem: 'agente não inicializado (agent not initialized)', 'sessão não encontrada (session not found)', 'serviço de sessão obrigatório (session service required)', 'erro na execução do agente (agent execution error)'. Sintomas típicos são: o agente não responde às mensagens, exceções durante a execução, sessões que não são salvas corretamente, falha ao inicializar o runner. Para solucionar, verifique se todos os serviços obrigatórios estão configurados (session_service é obrigatório), se o agente foi passado corretamente no construtor e se os IDs de usuário e sessão são válidos. Busque por este componente se encontrar problemas com execução de agente, inicialização de conversa, gerenciamento de sessão, 'agent not running', ciclo de vida do agente."
+  },
+  {
+    "id": "google.adk.runners.InMemoryRunner",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.runners",
+      "class": "InMemoryRunner"
+    },
+    "descriptions": {
+      "module": "Module for running agents",
+      "class": "In-memory Runner for testing and development"
+    },
+    "content": {
+      "module_name": "google.adk.runners",
+      "module_description": "Module for running agents",
+      "class_name": "InMemoryRunner",
+      "class_data": {
+        "description": "In-memory Runner for testing and development",
+        "base_class": "Runner",
+        "constructor_params": {
+          "agent": "BaseAgent",
+          "app_name": "str = 'InMemoryRunner'"
+        }
+      },
+      "sibling_classes": [
+        "Runner",
+        "InMemoryRunner"
+      ]
+    },
+    "metadata": {
+      "base_class": "Runner",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "InMemoryRunner classe do Google ADK para executar agentes em memória durante desenvolvimento e testes. Parte do módulo runners, que fornece diferentes ambientes de execução para agentes. Herda de Runner e trabalha em conjunto com BaseAgent. É usado para testar agentes localmente sem necessidade de infraestrutura externa, ideal para prototipagem rápida e debugging. Construtor recebe um agente (BaseAgent) e opcionalmente um nome da aplicação. Erros comuns incluem: 'agente não inicializado (agent not initialized)', 'runner já em execução (runner already running)', 'falha ao iniciar agente (failed to start agent)'. Sintomas típicos são: o agente não responde durante testes, erro 'AttributeError' ao tentar executar, processo trava sem mensagens de erro claras. Para solucionar, verifique se o agente foi corretamente instanciado antes de passar para o InMemoryRunner e se não há conflitos de dependências. Busque por este componente se encontrar problemas com execução local de agentes, ambiente de desenvolvimento, testes unitários, debugging de agentes, runner em memória."
+  },
+  {
+    "id": "google.adk.sessions.Session",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "Session"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Represents a series of interactions between a user and agents",
+      "fields": [
+        {
+          "field": "id",
+          "description": "Unique identifier of the session"
+        },
+        {
+          "field": "app_name",
+          "description": "Name of the app"
+        },
+        {
+          "field": "user_id",
+          "description": "ID of the user"
+        },
+        {
+          "field": "state",
+          "description": "State of the session"
+        },
+        {
+          "field": "events",
+          "description": "Events of the session"
+        },
+        {
+          "field": "last_update_time",
+          "description": "Last update time of the session"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "Session",
+      "class_data": {
+        "description": "Represents a series of interactions between a user and agents",
+        "type": "pydantic_model",
+        "fields": {
+          "id": {
+            "type": "str",
+            "required": true,
+            "description": "Unique identifier of the session"
+          },
+          "app_name": {
+            "type": "str",
+            "required": true,
+            "description": "Name of the app"
+          },
+          "user_id": {
+            "type": "str",
+            "required": true,
+            "description": "ID of the user"
+          },
+          "state": {
+            "type": "dict[str, Any]",
+            "description": "State of the session"
+          },
+          "events": {
+            "type": "list[Event]",
+            "description": "Events of the session"
+          },
+          "last_update_time": {
+            "type": "float",
+            "default": 0.0,
+            "description": "Last update time of the session"
+          }
+        }
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "pydantic_model",
+      "has_methods": false,
+      "has_fields": true,
+      "method_count": 0,
+      "field_count": 6,
+      "constructor_params": false
+    },
+    "descricao_processada": "Session classe do Google ADK para representar uma série de interações entre um usuário e agentes. Parte do módulo sessions, que controla a persistência e o histórico de conversações. Trabalha em conjunto com BaseSessionService, InMemorySessionService, DatabaseSessionService, VertexAiSessionService e State. É usado para encapsular dados de uma conversa completa, incluindo identificação única, estado persistente e histórico de eventos. Campos principais: id (identificador único), app_name (nome da aplicação), user_id (ID do usuário), state (estado da sessão), events (lista de eventos) e last_update_time (timestamp da última atualização). Erros comuns incluem: 'sessão não encontrada (session not found)', 'ID de sessão inválido (invalid session id)', 'estado da sessão corrompido (corrupted session state)', 'eventos não carregados (events not loaded)'. Sintomas típicos são: conversas não são recuperadas corretamente, dados de sessão aparecem vazios, histórico de interações é perdido, timestamps incorretos ou ausentes. Para solucionar, verifique se o ID da sessão está sendo passado corretamente e se o serviço de sessão está inicializado. Busque por este componente se encontrar problemas com gerenciamento de sessão, persistência de conversa, histórico de chat, dados de usuário, contexto de aplicação, session management."
+  },
+  {
+    "id": "google.adk.sessions.BaseSessionService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "BaseSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Base class for session services",
+      "methods": [
+        {
+          "method": "create_session",
+          "description": "Creates a new session"
+        },
+        {
+          "method": "get_session",
+          "description": "Gets a session"
+        },
+        {
+          "method": "delete_session",
+          "description": "Deletes a session"
+        },
+        {
+          "method": "list_sessions",
+          "description": "Lists all sessions"
+        },
+        {
+          "method": "list_events",
+          "description": "Lists events in a session"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "BaseSessionService",
+      "class_data": {
+        "description": "Base class for session services",
+        "type": "abstract",
+        "methods": {
+          "create_session": {
+            "description": "Creates a new session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "state": "Optional[dict]",
+              "session_id": "Optional[str]"
+            },
+            "return_type": "Session",
+            "abstract": true
+          },
+          "get_session": {
+            "description": "Gets a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "config": "Optional[dict]"
+            },
+            "return_type": "Optional[Session]",
+            "abstract": true
+          },
+          "delete_session": {
+            "description": "Deletes a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "None",
+            "abstract": true
+          },
+          "list_sessions": {
+            "description": "Lists all sessions",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str"
+            },
+            "return_type": "ListSessionsResponse",
+            "abstract": true
+          },
+          "list_events": {
+            "description": "Lists events in a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "ListEventsResponse",
+            "abstract": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 5,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseSessionService classe abstrata do Google ADK para definir a interface padrão de serviços de gerenciamento de sessões. Parte do módulo sessions, que controla a persistência e o histórico de conversações entre agentes e usuários. Trabalha em conjunto com Session, InMemorySessionService, DatabaseSessionService, VertexAiSessionService, State. É usado como classe base para implementar diferentes estratégias de armazenamento de sessões (memória, banco de dados, Vertex AI). Métodos principais: create_session para criar nova sessão, get_session para recuperar sessão existente, delete_session para remover sessão, list_sessions para listar todas as sessões de um usuário, list_events para obter histórico de eventos. Erros comuns incluem: 'método não implementado (method not implemented)', 'NotImplementedError: subclass must implement', 'sessão não encontrada (session not found)', 'parâmetros obrigatórios ausentes (missing required parameters)'. Sintomas típicos são: erro ao tentar instanciar diretamente a classe base, falha na criação de sessões, métodos abstratos não implementados nas subclasses. Para solucionar, sempre use uma implementação concreta como InMemorySessionService ou DatabaseSessionService, nunca instancie BaseSessionService diretamente. Busque por este componente se encontrar problemas com implementação de serviços de sessão, herança de classes abstratas, 'abstract method', gerenciamento de persistência, arquitetura de sessões."
+  },
+  {
+    "id": "google.adk.sessions.InMemorySessionService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "InMemorySessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "An in-memory implementation of session service"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "InMemorySessionService",
+      "class_data": {
+        "description": "An in-memory implementation of session service",
+        "base_class": "BaseSessionService"
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseSessionService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "InMemorySessionService classe do Google ADK para gerenciar sessões de conversa armazenadas na memória RAM. Parte do módulo sessions, que controla a persistência e o histórico de conversações. Herda de BaseSessionService e trabalha em conjunto com Session, State, DatabaseSessionService, VertexAiSessionService. É usado para desenvolvimento, testes e aplicações simples onde os dados de sessão não precisam persistir após o reinício da aplicação. Ideal para prototipagem rápida e ambientes onde a persistência em banco de dados não é necessária. Erros comuns incluem: 'dados perdidos após reinicialização (data lost after restart)', 'sessão não encontrada (session not found)', 'memória insuficiente (out of memory)'. Sintomas típicos são: todas as conversas são perdidas quando a aplicação é reiniciada, o histórico de chat desaparece, dados de usuário não persistem entre execuções, consumo crescente de memória em aplicações de longa duração. Para solucionar, considere migrar para DatabaseSessionService ou VertexAiSessionService para persistência permanente, ou implemente limpeza periódica de sessões antigas. Busque por este componente se encontrar problemas com armazenamento temporário, sessões em memória, dados voláteis, desenvolvimento local, session service, gerenciamento de estado temporário."
+  },
+  {
+    "id": "google.adk.sessions.DatabaseSessionService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "DatabaseSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "A session service that uses a database for storage"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "DatabaseSessionService",
+      "class_data": {
+        "description": "A session service that uses a database for storage",
+        "base_class": "BaseSessionService",
+        "constructor_params": {
+          "db_url": "str"
+        }
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseSessionService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "DatabaseSessionService classe do Google ADK para gerenciar sessões de conversa usando um banco de dados como armazenamento persistente. Parte do módulo sessions, que controla a persistência e o histórico de conversações. Herda de BaseSessionService e trabalha em conjunto com Session, InMemorySessionService, VertexAiSessionService e State. É usado para armazenar dados de sessão em bancos de dados relacionais ou NoSQL, garantindo persistência entre reinicializações da aplicação. Requer parâmetro db_url no construtor para configurar a conexão com o banco. Erros comuns incluem: 'falha na conexão com banco (database connection failed)', 'URL de banco inválida (invalid database URL)', 'erro de autenticação no banco (database authentication error)', 'tabela de sessão não encontrada (session table not found)'. Sintomas típicos são: sessões não são salvas após reinicialização, erro de conexão ao inicializar o serviço, dados de sessão corrompidos ou inacessíveis, timeout de conexão com banco. Para solucionar, verifique se a URL do banco está correta, se as credenciais são válidas e se as tabelas necessárias existem no banco. Busque por este componente se encontrar problemas com persistência de sessão, armazenamento em banco de dados, 'session not persisting', configuração de database, gerenciamento de estado persistente."
+  },
+  {
+    "id": "google.adk.sessions.VertexAiSessionService",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "VertexAiSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Connects to the managed Vertex AI Session Service"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "VertexAiSessionService",
+      "class_data": {
+        "description": "Connects to the managed Vertex AI Session Service",
+        "base_class": "BaseSessionService",
+        "constructor_params": {
+          "project": "Optional[str]",
+          "location": "Optional[str]"
+        }
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseSessionService",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "VertexAiSessionService classe do Google ADK para conectar ao serviço gerenciado de sessões do Vertex AI na nuvem. Parte do módulo sessions, que controla a persistência e o histórico de conversações. Herda de BaseSessionService e trabalha em conjunto com Session, InMemorySessionService, DatabaseSessionService e State. É usado para persistir dados de sessão usando a infraestrutura gerenciada do Google Cloud, oferecendo escalabilidade e confiabilidade para aplicações em produção. Parâmetros do construtor: project (ID do projeto GCP) e location (região do serviço). Erros comuns incluem: 'credenciais não configuradas (credentials not configured)', 'projeto não encontrado (project not found)', 'região não suportada (location not supported)', 'falha na autenticação (authentication failed)', 'quota excedida (quota exceeded)'. Sintomas típicos são: erro 403 Forbidden ao tentar salvar sessão, timeout na conexão com Vertex AI, mensagem 'DefaultCredentialsError', dados de sessão não são persistidos entre reinicializações. Para solucionar, verifique se as credenciais do Google Cloud estão configuradas (gcloud auth), se o projeto e região estão corretos, e se as APIs necessárias estão habilitadas. Busque por este componente se encontrar problemas com persistência em nuvem, sessões em produção, Vertex AI integration, Google Cloud sessions, managed session service."
+  },
+  {
+    "id": "google.adk.sessions.State",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "State"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "A state dict that maintains current value and pending-commit delta",
+      "methods": [
+        {
+          "method": "get",
+          "description": "Returns value for given key"
+        },
+        {
+          "method": "update",
+          "description": "Updates state dict with given delta"
+        },
+        {
+          "method": "has_delta",
+          "description": "Whether state has pending delta"
+        },
+        {
+          "method": "to_dict",
+          "description": "Returns the state dict"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "State",
+      "class_data": {
+        "description": "A state dict that maintains current value and pending-commit delta",
+        "constants": {
+          "APP_PREFIX": "app:",
+          "USER_PREFIX": "user:",
+          "TEMP_PREFIX": "temp:"
+        },
+        "methods": {
+          "get": {
+            "description": "Returns value for given key",
+            "parameters": {
+              "key": "str",
+              "default": "Any = None"
+            },
+            "return_type": "Any"
+          },
+          "update": {
+            "description": "Updates state dict with given delta",
+            "parameters": {
+              "delta": "dict"
+            }
+          },
+          "has_delta": {
+            "description": "Whether state has pending delta",
+            "return_type": "bool"
+          },
+          "to_dict": {
+            "description": "Returns the state dict",
+            "return_type": "dict[str, Any]"
+          }
+        }
+      },
+      "sibling_classes": [
+        "Session",
+        "BaseSessionService",
+        "InMemorySessionService",
+        "DatabaseSessionService",
+        "VertexAiSessionService",
+        "State"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 4,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "State classe do Google ADK para gerenciar estado e dados durante uma sessão de conversa com agentes. Parte do módulo sessions, que controla a persistência e o histórico de conversações. Trabalha em conjunto com Session, BaseSessionService, InMemorySessionService, DatabaseSessionService, VertexAiSessionService. É usado para armazenar dados do usuário, contexto da conversa e variáveis temporárias entre turnos. Utiliza prefixos para organizar dados: 'app:' para dados da aplicação, 'user:' para dados do usuário, 'temp:' para dados temporários. Métodos principais: get para recuperar um valor com chave, update para modificar o estado com delta, has_delta para verificar mudanças pendentes, to_dict para exportar o estado completo. Mantém tanto o valor atual quanto mudanças pendentes (pending-commit delta). Erros comuns incluem: 'estado não persistido (state not persisted)', 'dados perdidos entre turnos (data lost between turns)', 'chave não encontrada (key not found)', 'delta não aplicado (delta not applied)'. Sintomas típicos são: informações do usuário somem entre interações, o contexto da conversa é perdido após uma resposta, dados não são salvos corretamente, mudanças no estado não são refletidas. Para solucionar, verifique se o método update está sendo chamado com o delta correto e se o serviço de sessão está configurado adequadamente. Busque por este componente se encontrar problemas com persistência de dados, memória do agente, contexto de sessão, gerenciamento de estado, state management, session data, conversational memory."
+  },
+  {
+    "id": "google.adk.tools.BaseTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "BaseTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "The base class for all tools",
+      "methods": [
+        {
+          "method": "process_llm_request",
+          "description": "Processes outgoing LLM request for this tool"
+        },
+        {
+          "method": "run_async",
+          "description": "Runs the tool with given arguments"
+        }
+      ],
+      "fields": [
+        {
+          "field": "name",
+          "description": "Name of the tool"
+        },
+        {
+          "field": "description",
+          "description": "Description of the tool"
+        },
+        {
+          "field": "is_long_running",
+          "description": "Whether tool is long running operation"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "BaseTool",
+      "class_data": {
+        "description": "The base class for all tools",
+        "type": "abstract",
+        "fields": {
+          "name": {
+            "type": "str",
+            "description": "Name of the tool"
+          },
+          "description": {
+            "type": "str",
+            "description": "Description of the tool"
+          },
+          "is_long_running": {
+            "type": "bool",
+            "default": false,
+            "description": "Whether tool is long running operation"
+          }
+        },
+        "methods": {
+          "process_llm_request": {
+            "description": "Processes outgoing LLM request for this tool",
+            "parameters": {
+              "tool_context": "ToolContext",
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "None"
+          },
+          "run_async": {
+            "description": "Runs the tool with given arguments",
+            "parameters": {
+              "args": "dict",
+              "tool_context": "ToolContext"
+            },
+            "return_type": "Any"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": "abstract",
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 2,
+      "field_count": 3,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseTool classe abstrata do Google ADK que serve como base para todas as ferramentas utilizáveis por agentes. Parte do módulo tools, que contém diversas ferramentas para estender as capacidades dos agentes. Trabalha como classe pai para FunctionTool, LongRunningFunctionTool, RestApiTool, VertexAiSearchTool, OpenAPIToolset, MCPToolset. É usado para definir a estrutura comum de ferramentas customizadas através de herança. Métodos principais: run_async para executar a ferramenta com argumentos, process_llm_request para processar requisições do LLM. Campos essenciais: name (nome da ferramenta), description (descrição), is_long_running (indica operação de longa duração). Erros comuns incluem: 'método abstrato não implementado (abstract method not implemented)', 'classe não pode ser instanciada (cannot instantiate abstract class)', 'run_async deve ser sobrescrito (run_async must be overridden)'. Sintomas típicos são: TypeError ao tentar instanciar diretamente a BaseTool, erro de método não implementado ao herdar sem sobrescrever run_async, falha na execução da ferramenta customizada. Para solucionar, sempre herde de BaseTool e implemente o método run_async obrigatório, nunca tente instanciar BaseTool diretamente. Busque por este componente se encontrar problemas com criação de ferramentas customizadas, herança de classes, implementação de tools, erro de classe abstrata, base class, ferramenta personalizada."
+  },
+  {
+    "id": "google.adk.tools.FunctionTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "FunctionTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A tool that wraps a user-defined Python function"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "FunctionTool",
+      "class_data": {
+        "description": "A tool that wraps a user-defined Python function",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "func": "Callable"
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "FunctionTool classe do Google ADK para converter uma função Python em uma ferramenta utilizável por agentes. Parte do módulo tools, que contém várias ferramentas para estender as capacidades dos agentes. Herda de BaseTool e trabalha em conjunto com LongRunningFunctionTool, RestApiTool, OpenAPIToolset, MCPToolset e outras ferramentas do ecossistema. É usado para integrar código Python personalizado aos agentes, permitindo que executem funções específicas como cálculos, processamento de dados ou integrações customizadas. O construtor recebe um parâmetro func do tipo Callable (função executável). Erros comuns incluem: 'função não é chamável (not callable)', 'TypeError: object is not callable', 'ferramenta não registrada (tool not registered)', 'parâmetro inválido (invalid parameter)'. Sintomas típicos são: o agente não consegue usar a ferramenta, erro ao tentar executar a função, a ferramenta não aparece disponível para o agente, falha na inicialização da ferramenta. Para solucionar, verifique se o parâmetro func é realmente uma função (não uma string com o nome), se a função está definida corretamente e se não há erros de sintaxe. Busque por este componente se encontrar problemas com ferramentas customizadas, integração de código Python, função personalizada, tool wrapper, extensão de agente, callable function."
+  },
+  {
+    "id": "google.adk.tools.LongRunningFunctionTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "LongRunningFunctionTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A function tool that returns result asynchronously"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "LongRunningFunctionTool",
+      "class_data": {
+        "description": "A function tool that returns result asynchronously",
+        "base_class": "FunctionTool"
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "FunctionTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "LongRunningFunctionTool classe do Google ADK para executar funções que demoram mais tempo para processar de forma assíncrona. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Herda de FunctionTool e trabalha em conjunto com BaseTool, RestApiTool, OpenAPIToolset, MCPToolset. É usado para operações que podem levar vários segundos ou minutos, como processamento de arquivos grandes, consultas a bancos de dados complexas, chamadas para APIs externas lentas. Diferente do FunctionTool padrão, não bloqueia a execução do agente enquanto aguarda o resultado. Erros comuns incluem: 'timeout na execução (execution timeout)', 'função não retorna resultado assíncrono (function does not return async result)', 'callback não configurado (callback not configured)', 'operação cancelada (operation cancelled)'. Sintomas típicos são: o agente trava ou fica sem resposta durante operações longas, timeout errors aparecem nos logs, a conversa para de funcionar quando uma operação demorada é iniciada. Para solucionar, verifique se a função está implementada corretamente para execução assíncrona e se os timeouts estão configurados adequadamente. Busque por este componente se encontrar problemas com operações demoradas, processamento assíncrono, timeout de ferramentas, agente travando, long running operations, async tools."
+  },
+  {
+    "id": "google.adk.tools.ExampleTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "ExampleTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A tool that adds few-shot examples to LLM request"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ExampleTool",
+      "class_data": {
+        "description": "A tool that adds few-shot examples to LLM request",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "examples": "List[Example]"
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "ExampleTool classe do Google ADK para adicionar exemplos few-shot às requisições do modelo de linguagem (LLM). Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Herda de BaseTool e trabalha em conjunto com FunctionTool, RestApiTool, VertexAiSearchTool, OpenAPIToolset. É usado para melhorar a qualidade das respostas do agente fornecendo exemplos de entrada e saída esperada, implementando a técnica de few-shot learning. Recebe uma lista de objetos Example no construtor. Erros comuns incluem: 'lista de exemplos vazia (empty examples list)', 'formato de exemplo inválido (invalid example format)', 'exemplos muito longos (examples too long)', 'falha ao aplicar exemplos (failed to apply examples)'. Sintomas típicos são: o agente não melhora a qualidade das respostas mesmo com exemplos configurados, erro de validação ao inicializar a ferramenta, exemplos não aparecem no contexto do LLM. Para solucionar, verifique se a lista de Example está corretamente formatada e se os exemplos são relevantes para o caso de uso. Busque por este componente se encontrar problemas com few-shot learning, melhoria de qualidade de resposta, exemplos para LLM, treinamento por exemplos, prompt engineering."
+  },
+  {
+    "id": "google.adk.tools.VertexAiSearchTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "VertexAiSearchTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A built-in tool using Vertex AI Search"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "VertexAiSearchTool",
+      "class_data": {
+        "description": "A built-in tool using Vertex AI Search",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "data_store_id": "Optional[str]",
+          "search_engine_id": "Optional[str]"
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "VertexAiSearchTool classe do Google ADK para integrar busca semântica usando Vertex AI Search em agentes conversacionais. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Herda de BaseTool e trabalha em conjunto com FunctionTool, RestApiTool, OpenAPIToolset, APIHubToolset. É usado para permitir que agentes busquem informações em bases de conhecimento indexadas no Vertex AI Search, como documentos, FAQs ou catálogos de produtos. Parâmetros do construtor: data_store_id para especificar o ID do data store, search_engine_id para definir o mecanismo de busca específico. Erros comuns incluem: 'data store não encontrado (data store not found)', 'credenciais inválidas (invalid credentials)', 'quota excedida (quota exceeded)', 'search engine ID inválido (invalid search engine ID)'. Sintomas típicos são: o agente retorna 'não encontrei informações' mesmo com dados disponíveis, erro de autenticação ao tentar buscar, timeout nas consultas de busca, resultados vazios ou irrelevantes. Para solucionar, verifique se o data_store_id e search_engine_id estão corretos, confirme as permissões do projeto no Google Cloud e valide se o índice do Vertex AI Search está populado. Busque por este componente se encontrar problemas com busca semântica, recuperação de informações, integração com Vertex AI, knowledge base, RAG (Retrieval Augmented Generation), pesquisa em documentos."
+  },
+  {
+    "id": "google.adk.tools.APIHubToolset",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "APIHubToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Generates tools from API Hub resource",
+      "methods": [
+        {
+          "method": "get_tool",
+          "description": "Retrieves a specific tool by name"
+        },
+        {
+          "method": "get_tools",
+          "description": "Retrieves all available tools"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "APIHubToolset",
+      "class_data": {
+        "description": "Generates tools from API Hub resource",
+        "constructor_params": {
+          "apihub_resource_name": "str",
+          "access_token": "Optional[str]",
+          "service_account_json": "Optional[str]",
+          "name": "str = ''",
+          "description": "str = ''",
+          "lazy_load_spec": "bool = False",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]",
+          "apihub_client": "Optional[Client]"
+        },
+        "methods": {
+          "get_tool": {
+            "description": "Retrieves a specific tool by name",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[RestApiTool]"
+          },
+          "get_tools": {
+            "description": "Retrieves all available tools",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 2,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "APIHubToolset classe do Google ADK para gerar ferramentas automaticamente a partir de recursos do API Hub do Google Cloud. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Trabalha em conjunto com BaseTool, RestApiTool, OpenAPIToolset, MCPToolset e ToolContext. É usado para conectar agentes a APIs externas catalogadas no API Hub sem necessidade de configuração manual. Métodos principais: get_tool para recuperar uma ferramenta específica por nome, get_tools para obter todas as ferramentas disponíveis do recurso. Parâmetros do construtor incluem apihub_resource_name (obrigatório), access_token ou service_account_json para autenticação, e lazy_load_spec para carregamento sob demanda. Erros comuns incluem: 'recurso não encontrado (resource not found)', 'falha na autenticação (authentication failed)', 'API Hub inacessível (API Hub unreachable)', 'especificação inválida (invalid specification)'. Sintomas típicos são: erro 404 ao tentar acessar o recurso do API Hub, falha de permissão ao carregar especificações, timeout na conexão com API Hub, ferramentas retornam lista vazia. Para solucionar, verifique se o nome do recurso está correto, se as credenciais têm permissões adequadas no API Hub e se o projeto tem acesso ao serviço. Busque por este componente se encontrar problemas com integração API Hub, geração automática de ferramentas, conectividade com APIs externas, catálogo de APIs, toolset dinâmico."
+  },
+  {
+    "id": "google.adk.tools.RestApiTool",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "RestApiTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A generic tool that interacts with REST API",
+      "methods": [
+        {
+          "method": "from_parsed_operation",
+          "description": "Initializes from ParsedOperation object"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "RestApiTool",
+      "class_data": {
+        "description": "A generic tool that interacts with REST API",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "endpoint": "dict",
+          "operation": "dict",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]",
+          "should_parse_operation": "bool = True"
+        },
+        "methods": {
+          "from_parsed_operation": {
+            "description": "Initializes from ParsedOperation object",
+            "parameters": {
+              "parsed": "ParsedOperation"
+            },
+            "return_type": "RestApiTool",
+            "static": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "BaseTool",
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 1,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "RestApiTool classe do Google ADK para integrar agentes com APIs REST externas de forma genérica. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Herda de BaseTool e trabalha em conjunto com FunctionTool, LongRunningFunctionTool, OpenAPIToolset, APIHubToolset. É usado para conectar agentes a serviços web, consumir dados de APIs públicas ou privadas, e executar operações HTTP (GET, POST, PUT, DELETE). Construtor aceita endpoint, operation, auth_scheme e auth_credential para configurar a integração. Método from_parsed_operation permite inicializar a partir de um objeto ParsedOperation. Erros comuns incluem: 'falha na autenticação (authentication failed)', 'endpoint não encontrado (endpoint not found)', 'timeout de conexão (connection timeout)', 'resposta inválida da API (invalid API response)', 'credenciais ausentes (missing credentials)'. Sintomas típicos são: agente retorna erro 401 ou 403, falha ao conectar com a API externa, timeout nas requisições, dados não são retornados corretamente, erro de parsing da resposta JSON. Para solucionar, verifique as credenciais de autenticação, teste o endpoint manualmente, confirme se a URL está correta e se a API está disponível. Busque por este componente se encontrar problemas com integração de APIs, consumo de serviços web, autenticação REST, conexão externa, web service integration."
+  },
+  {
+    "id": "google.adk.tools.OpenAPIToolset",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "OpenAPIToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Parses OpenAPI spec into list of RestApiTool",
+      "methods": [
+        {
+          "method": "get_tool",
+          "description": "Get a tool by name"
+        },
+        {
+          "method": "get_tools",
+          "description": "Get all tools in the toolset"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "OpenAPIToolset",
+      "class_data": {
+        "description": "Parses OpenAPI spec into list of RestApiTool",
+        "constructor_params": {
+          "spec_dict": "Optional[dict]",
+          "spec_str": "Optional[str]",
+          "spec_str_type": "str = 'json'",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]"
+        },
+        "methods": {
+          "get_tool": {
+            "description": "Get a tool by name",
+            "parameters": {
+              "tool_name": "str"
+            },
+            "return_type": "Optional[RestApiTool]"
+          },
+          "get_tools": {
+            "description": "Get all tools in the toolset",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 2,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "OpenAPIToolset classe do Google ADK para converter especificações OpenAPI em conjuntos de ferramentas RestApiTool utilizáveis por agentes. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades customizadas. Trabalha em conjunto com RestApiTool, APIHubToolset, MCPToolset, BaseTool e aceita AuthScheme e AuthCredential para autenticação. É usado para integrar APIs externas documentadas em OpenAPI/Swagger, permitindo que agentes façam chamadas HTTP automaticamente baseadas na especificação. Métodos principais: get_tool para recuperar uma ferramenta específica por nome, get_tools para obter todas as ferramentas do conjunto. Aceita spec_dict (dicionário), spec_str (string JSON/YAML) e configurações de autenticação no construtor. Erros comuns incluem: 'especificação OpenAPI inválida (invalid OpenAPI spec)', 'falha no parsing da spec (spec parsing failed)', 'esquema de autenticação não suportado (unsupported auth scheme)', 'endpoint não encontrado (endpoint not found)'. Sintomas típicos são: erro de parsing ao carregar a especificação, ferramentas não são criadas corretamente, falhas de autenticação nas chamadas de API, 'KeyError' ao acessar propriedades da spec. Para solucionar, verifique se a especificação OpenAPI está bem formada, se o formato (JSON/YAML) está correto e se as credenciais de autenticação estão configuradas adequadamente. Busque por este componente se encontrar problemas com integração de APIs, OpenAPI, Swagger, toolset de APIs, autenticação de ferramentas, parsing de especificação."
+  },
+  {
+    "id": "google.adk.tools.MCPToolset",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "MCPToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Connects to MCP Server and retrieves MCP Tools into ADK Tools",
+      "methods": [
+        {
+          "method": "from_server",
+          "description": "Retrieve all tools from MCP connection"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "MCPToolset",
+      "class_data": {
+        "description": "Connects to MCP Server and retrieves MCP Tools into ADK Tools",
+        "constructor_params": {
+          "connection_params": "Union[StdioServerParameters, SseServerParams]",
+          "errlog": "IO = stderr",
+          "exit_stack": "AsyncExitStack"
+        },
+        "methods": {
+          "from_server": {
+            "description": "Retrieve all tools from MCP connection",
+            "parameters": {
+              "connection_params": "Union[StdioServerParameters, SseServerParams]",
+              "async_exit_stack": "Optional[AsyncExitStack]",
+              "errlog": "IO = stderr"
+            },
+            "return_type": "Tuple[List[MCPTool], AsyncExitStack]",
+            "static": true
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 1,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "MCPToolset classe do Google ADK para conectar a servidores MCP (Model Context Protocol) e importar suas ferramentas para uso em agentes. Parte do módulo tools, que estende as capacidades dos agentes com funcionalidades externas. Trabalha em conjunto com BaseTool, MCPTool, FunctionTool, RestApiTool, OpenAPIToolset, APIHubToolset. É usado para integrar ferramentas de servidores MCP externos, permitindo que agentes acessem recursos como editores de código, sistemas de arquivos ou APIs especializadas. Método principal: from_server para recuperar todas as ferramentas disponíveis de uma conexão MCP. Erros comuns incluem: 'conexão MCP falhou (MCP connection failed)', 'servidor não encontrado (server not found)', 'timeout na conexão (connection timeout)', 'ferramentas não carregadas (tools not loaded)'. Sintomas típicos são: agente não consegue acessar ferramentas MCP, erro de conexão com servidor externo, timeout durante inicialização, lista de ferramentas vazia mesmo com servidor ativo. Para solucionar, verifique se o servidor MCP está rodando, se os parâmetros de conexão estão corretos (StdioServerParameters ou SseServerParams) e se o AsyncExitStack está sendo gerenciado adequadamente. Busque por este componente se encontrar problemas com MCP integration, Model Context Protocol, ferramentas externas, conexão com servidores, importação de tools."
+  },
+  {
+    "id": "google.adk.tools.ToolContext",
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "ToolContext"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "The context of the tool",
+      "methods": [
+        {
+          "method": "request_credential",
+          "description": "Request authentication credential"
+        },
+        {
+          "method": "get_auth_response",
+          "description": "Get authentication response"
+        },
+        {
+          "method": "list_artifacts",
+          "description": "Lists artifact filenames in current session"
+        },
+        {
+          "method": "search_memory",
+          "description": "Searches memory of current user"
+        }
+      ],
+      "fields": [
+        {
+          "field": "invocation_context",
+          "description": "The invocation context of the tool"
+        },
+        {
+          "field": "function_call_id",
+          "description": "Function call ID of current tool call"
+        },
+        {
+          "field": "event_actions",
+          "description": "Event actions of current tool call"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ToolContext",
+      "class_data": {
+        "description": "The context of the tool",
+        "base_class": "CallbackContext",
+        "fields": {
+          "invocation_context": {
+            "type": "InvocationContext",
+            "description": "The invocation context of the tool"
+          },
+          "function_call_id": {
+            "type": "Optional[str]",
+            "description": "Function call ID of current tool call"
+          },
+          "event_actions": {
+            "type": "Optional[EventActions]",
+            "description": "Event actions of current tool call"
+          }
+        },
+        "methods": {
+          "request_credential": {
+            "description": "Request authentication credential",
+            "parameters": {
+              "auth_config": "AuthConfig"
+            },
+            "return_type": "None"
+          },
+          "get_auth_response": {
+            "description": "Get authentication response",
+            "parameters": {
+              "auth_config": "AuthConfig"
+            },
+            "return_type": "AuthCredential"
+          },
+          "list_artifacts": {
+            "description": "Lists artifact filenames in current session",
+            "return_type": "list[str]"
+          },
+          "search_memory": {
+            "description": "Searches memory of current user",
+            "parameters": {
+              "query": "str"
+            },
+            "return_type": "SearchMemoryResponse"
+          }
+        }
+      },
+      "sibling_classes": [
+        "BaseTool",
+        "FunctionTool",
+        "LongRunningFunctionTool",
+        "ExampleTool",
+        "VertexAiSearchTool",
+        "APIHubToolset",
+        "RestApiTool",
+        "OpenAPIToolset",
+        "MCPToolset",
+        "ToolContext"
+      ]
+    },
+    "metadata": {
+      "base_class": "CallbackContext",
+      "type": null,
+      "has_methods": true,
+      "has_fields": true,
+      "method_count": 4,
+      "field_count": 3,
+      "constructor_params": false
+    },
+    "descricao_processada": "ToolContext classe do Google ADK para fornecer contexto e informações durante a execução de ferramentas por agentes. Parte do módulo tools, que contém diversas ferramentas para estender capacidades dos agentes. Herda de CallbackContext e trabalha em conjunto com BaseTool, FunctionTool, RestApiTool, LongRunningFunctionTool. É usado para acessar dados da sessão atual, gerenciar autenticação, buscar memória do usuário e listar artefatos. Métodos principais: request_credential e get_auth_response para autenticação, search_memory para buscar na memória do usuário, list_artifacts para listar arquivos da sessão. Campos importantes: invocation_context com contexto da invocação, function_call_id com ID da chamada atual, event_actions para ações de eventos. Erros comuns incluem: 'contexto não disponível (context not available)', 'credencial não encontrada (credential not found)', 'falha na autenticação (authentication failed)', 'memória não acessível (memory not accessible)'. Sintomas típicos são: ferramentas falham ao acessar dados da sessão, erros de autenticação em APIs externas, busca na memória retorna vazio, lista de artefatos não carrega. Para solucionar, verifique se o contexto está sendo passado corretamente para a ferramenta e se as configurações de autenticação estão válidas. Busque por este componente se encontrar problemas com contexto de ferramenta, autenticação em tools, acesso à memória do usuário, gerenciamento de sessão em ferramentas, callback context."
+  },
+  {
+    "id": "google.adk.tools.functions",
+    "type": "module_functions",
+    "hierarchy": {
+      "module": "google.adk.tools"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "functions": [
+        {
+          "function": "exit_loop",
+          "description": "Exits the loop. Call only when instructed."
+        },
+        {
+          "function": "transfer_to_agent",
+          "description": "Transfer question to another agent"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "functions": {
+        "exit_loop": {
+          "description": "Exits the loop. Call only when instructed.",
+          "parameters": {
+            "tool_context": "ToolContext"
+          }
+        },
+        "transfer_to_agent": {
+          "description": "Transfer question to another agent",
+          "parameters": {
+            "agent_name": "str",
+            "tool_context": "ToolContext"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "function_count": 2,
+      "function_names": [
+        "exit_loop",
+        "transfer_to_agent"
+      ]
+    },
+    "descricao_processada": "Funções utilitárias do Google ADK para controle de fluxo e transferência entre agentes. Parte do módulo tools, que fornece ferramentas essenciais para operação de agentes conversacionais. Trabalha em conjunto com FunctionTool, BaseTool, ToolContext. As funções principais são: exit_loop para encerrar loops de conversação quando instruído, e transfer_to_agent para transferir uma pergunta ou contexto para outro agente específico. A função exit_loop deve ser chamada apenas quando explicitamente solicitado pelo usuário ou sistema. A função transfer_to_agent requer o nome do agente de destino e o contexto atual. Erros comuns incluem: 'agente não encontrado (agent not found)', 'contexto inválido (invalid context)', 'transferência falhou (transfer failed)', 'loop não pode ser encerrado (cannot exit loop)'. Sintomas típicos são: o agente não consegue encerrar a conversa, transferências entre agentes falham, erro 'KeyError' ao tentar acessar agente inexistente, loop infinito de conversação. Para solucionar, verifique se o nome do agente está correto, se o ToolContext está sendo passado adequadamente e se as condições para exit_loop foram atendidas. Busque por este componente se encontrar problemas com controle de fluxo, transferência de agentes, encerramento de conversas, roteamento entre agentes, handoff, agent routing."
+  },
+  {
+    "id": "google.adk.tools.retrieval.BaseRetrievalTool",
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "BaseRetrievalTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Base class for retrieval tools",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "BaseRetrievalTool",
+      "class_data": {
+        "description": "Base class for retrieval tools",
+        "base_class": "BaseTool"
+      },
+      "sibling_classes": [
+        "BaseRetrievalTool",
+        "LlamaIndexRetrieval",
+        "FilesRetrieval",
+        "VertexAiRagRetrieval"
+      ],
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "metadata": {
+      "base_class": "BaseTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": false
+    },
+    "descricao_processada": "BaseRetrievalTool classe base do Google ADK para criar ferramentas de recuperação de informações e busca de dados. Parte do submódulo retrieval dentro de tools, que fornece capacidades de busca e recuperação de documentos para agentes. Herda de BaseTool e serve como fundação para LlamaIndexRetrieval, FilesRetrieval, VertexAiRagRetrieval. É usado como classe pai para implementar ferramentas que buscam informações em bases de dados, documentos ou sistemas externos. Permite que agentes recuperem contexto relevante, documentos específicos ou dados estruturados durante conversas. Erros comuns incluem: 'implementação de método abstrato ausente (abstract method not implemented)', 'ferramenta de recuperação não configurada (retrieval tool not configured)', 'falha na busca (retrieval failed)'. Sintomas típicos são: erro ao tentar usar uma subclasse sem implementar métodos obrigatórios, o agente não consegue recuperar informações relevantes, exceções durante operações de busca. Para solucionar, implemente todos os métodos abstratos necessários na subclasse e verifique a configuração da fonte de dados. Busque por este componente se encontrar problemas com busca de documentos, recuperação de informações, RAG (Retrieval Augmented Generation), knowledge base, base de conhecimento, search tool, ferramenta de pesquisa."
+  },
+  {
+    "id": "google.adk.tools.retrieval.LlamaIndexRetrieval",
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "LlamaIndexRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool using LlamaIndex",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "LlamaIndexRetrieval",
+      "class_data": {
+        "description": "Retrieval tool using LlamaIndex",
+        "base_class": "BaseRetrievalTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "retriever": "Retriever"
+        }
+      },
+      "sibling_classes": [
+        "BaseRetrievalTool",
+        "LlamaIndexRetrieval",
+        "FilesRetrieval",
+        "VertexAiRagRetrieval"
+      ],
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "metadata": {
+      "base_class": "BaseRetrievalTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "LlamaIndexRetrieval classe do Google ADK para implementar busca e recuperação de informações usando a biblioteca LlamaIndex. Parte do submódulo retrieval dentro de tools, que oferece diferentes estratégias de busca em documentos e bases de conhecimento. Herda de BaseRetrievalTool e trabalha em conjunto com FilesRetrieval, VertexAiRagRetrieval. É usado para conectar agentes a índices LlamaIndex existentes, permitindo busca semântica em documentos, PDFs, bases de dados vetoriais. Requer parâmetros: name (nome da ferramenta), description (descrição para o agente) e retriever (objeto Retriever do LlamaIndex). Erros comuns incluem: 'retriever não configurado (retriever not configured)', 'índice não encontrado (index not found)', 'falha na busca (retrieval failed)', 'LlamaIndex não instalado (LlamaIndex not installed)'. Sintomas típicos são: ImportError ao tentar usar a classe, o agente não consegue encontrar informações relevantes, erro 'module llamaindex not found', respostas vazias ou irrelevantes do retrieval. Para solucionar, verifique se o LlamaIndex está instalado (pip install llama-index), se o retriever foi inicializado corretamente e se o índice contém dados. Busque por este componente se encontrar problemas com busca semântica, RAG (Retrieval Augmented Generation), integração LlamaIndex, recuperação de documentos, knowledge base."
+  },
+  {
+    "id": "google.adk.tools.retrieval.FilesRetrieval",
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "FilesRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool for files",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "FilesRetrieval",
+      "class_data": {
+        "description": "Retrieval tool for files",
+        "base_class": "LlamaIndexRetrieval",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "input_dir": "str"
+        }
+      },
+      "sibling_classes": [
+        "BaseRetrievalTool",
+        "LlamaIndexRetrieval",
+        "FilesRetrieval",
+        "VertexAiRagRetrieval"
+      ],
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "metadata": {
+      "base_class": "LlamaIndexRetrieval",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "FilesRetrieval classe do Google ADK para criar ferramentas de recuperação de informações baseadas em arquivos locais. Parte do submódulo retrieval dentro de tools, que oferece diferentes estratégias de busca e recuperação de dados para agentes. Herda de LlamaIndexRetrieval e trabalha em conjunto com BaseRetrievalTool, VertexAiRagRetrieval. É usado para permitir que agentes busquem e recuperem informações de documentos armazenados em diretórios locais, como PDFs, TXTs ou outros formatos de arquivo. Parâmetros do construtor: name (nome da ferramenta), description (descrição da funcionalidade), input_dir (diretório contendo os arquivos para indexação). Erros comuns incluem: 'diretório não encontrado (directory not found)', 'arquivos não indexados (files not indexed)', 'falha na recuperação (retrieval failed)', 'formato de arquivo não suportado (unsupported file format)'. Sintomas típicos são: o agente não consegue encontrar informações nos arquivos, erro de 'FileNotFoundError' ou 'PermissionError', respostas vazias ou irrelevantes da ferramenta de busca. Para solucionar, verifique se o input_dir existe e contém arquivos legíveis, se as permissões de leitura estão corretas e se os arquivos estão em formatos suportados pelo LlamaIndex. Busque por este componente se encontrar problemas com busca em documentos, recuperação de arquivos locais, indexação de documentos, RAG com arquivos, 'file search not working'."
+  },
+  {
+    "id": "google.adk.tools.retrieval.VertexAiRagRetrieval",
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "VertexAiRagRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool using Vertex AI RAG",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "VertexAiRagRetrieval",
+      "class_data": {
+        "description": "Retrieval tool using Vertex AI RAG",
+        "base_class": "BaseRetrievalTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "rag_corpora": "Optional[List[str]]",
+          "rag_resources": "Optional[List[dict]]",
+          "similarity_top_k": "Optional[int]",
+          "vector_distance_threshold": "Optional[float]"
+        }
+      },
+      "sibling_classes": [
+        "BaseRetrievalTool",
+        "LlamaIndexRetrieval",
+        "FilesRetrieval",
+        "VertexAiRagRetrieval"
+      ],
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "metadata": {
+      "base_class": "BaseRetrievalTool",
+      "type": null,
+      "has_methods": false,
+      "has_fields": false,
+      "method_count": 0,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "VertexAiRagRetrieval classe do Google ADK para implementar busca e recuperação de informações usando Vertex AI RAG (Retrieval-Augmented Generation). Parte do submódulo retrieval dentro de tools, que fornece ferramentas de busca semântica e recuperação de documentos para agentes. Herda de BaseRetrievalTool e trabalha em conjunto com LlamaIndexRetrieval, FilesRetrieval. É usado para conectar agentes a bases de conhecimento do Vertex AI, permitindo busca por similaridade em corpora de documentos e recursos RAG. Parâmetros principais: rag_corpora para especificar os corpora de documentos, rag_resources para recursos RAG customizados, similarity_top_k para limitar resultados, vector_distance_threshold para controlar precisão da busca. Erros comuns incluem: 'corpus não encontrado (corpus not found)', 'credenciais do Vertex AI inválidas (invalid Vertex AI credentials)', 'limite de similaridade muito restritivo (similarity threshold too restrictive)', 'recurso RAG não configurado (RAG resource not configured)'. Sintomas típicos são: nenhum resultado é retornado mesmo com documentos relevantes, erro de autenticação com Google Cloud, busca retorna resultados irrelevantes, timeout na conexão com Vertex AI. Para solucionar, verifique as credenciais do Google Cloud, confirme se os corpora existem no projeto, ajuste os parâmetros de similaridade e threshold. Busque por este componente se encontrar problemas com RAG, busca semântica, Vertex AI integration, recuperação de documentos, knowledge base, vector search."
+  },
+  {
+    "id": "google.adk.tools.application_integration_tool.ApplicationIntegrationToolset",
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "application_integration_tool",
+      "class": "ApplicationIntegrationToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Generates tools from Application Integration or Integration Connector resource",
+      "submodule": "Application Integration tools",
+      "methods": [
+        {
+          "method": "get_tools",
+          "description": "Get all available tools"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ApplicationIntegrationToolset",
+      "class_data": {
+        "description": "Generates tools from Application Integration or Integration Connector resource",
+        "constructor_params": {
+          "project": "str",
+          "location": "str",
+          "integration": "Optional[str]",
+          "triggers": "Optional[List[str]]",
+          "connection": "Optional[str]",
+          "entity_operations": "Optional[dict]",
+          "actions": "Optional[List[str]]",
+          "tool_name": "str = ''",
+          "tool_instructions": "str = ''",
+          "service_account_json": "Optional[dict]"
+        },
+        "methods": {
+          "get_tools": {
+            "description": "Get all available tools",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      },
+      "sibling_classes": [
+        "ApplicationIntegrationToolset"
+      ],
+      "submodule_name": "application_integration_tool",
+      "submodule_description": "Application Integration tools"
+    },
+    "metadata": {
+      "base_class": null,
+      "type": null,
+      "has_methods": true,
+      "has_fields": false,
+      "method_count": 1,
+      "field_count": 0,
+      "constructor_params": true
+    },
+    "descricao_processada": "ApplicationIntegrationToolset classe do Google ADK para gerar ferramentas a partir de recursos do Application Integration ou Integration Connector do Google Cloud. Parte do módulo tools, que contém várias ferramentas para estender as capacidades dos agentes. Trabalha em conjunto com RestApiTool, FunctionTool, BaseTool e outros toolsets. É usado para conectar agentes a integrações existentes no Google Cloud, permitindo acesso a sistemas externos, APIs e conectores pré-configurados. Método principal: get_tools que retorna uma lista de RestApiTool baseada nas configurações de integração. Parâmetros do construtor incluem project (ID do projeto GCP), location (região), integration (nome da integração), triggers (gatilhos específicos), connection (conexão do conector), entity_operations (operações de entidade), actions (ações disponíveis), tool_name e tool_instructions para personalização. Erros comuns incluem: 'projeto não encontrado (project not found)', 'integração não existe (integration does not exist)', 'credenciais inválidas (invalid credentials)', 'região não suportada (unsupported location)', 'falha na autenticação (authentication failed)'. Sintomas típicos são: erro 404 ao tentar acessar a integração, falha de permissão ao conectar com o Application Integration, ferramentas vazias retornadas pelo get_tools, timeout na conexão com o Google Cloud. Para solucionar, verifique se o service_account_json tem as permissões corretas para Application Integration, confirme que o project e location estão corretos, e valide se a integração existe no console do Google Cloud. Busque por este componente se encontrar problemas com integração Google Cloud, Application Integration, conectores externos, ferramentas de integração, 'integration toolset', automação de workflows."
+  },
+  {
+    "id": "usage_examples",
+    "type": "examples_collection",
+    "hierarchy": {
+      "root": "usage_examples"
+    },
+    "descriptions": {
+      "collection": "Collection of usage examples for ADK",
+      "title": "Google ADK API Reference - Python",
+      "description": "Google Agent Development Kit (ADK) API documentation for Python"
+    },
+    "content": {
+      "example_count": 5,
+      "example_names": [
+        "basic_agent",
+        "agent_with_tools",
+        "running_agent",
+        "openapi_tools",
+        "mcp_tools"
+      ],
+      "structure_note": "Examples contain description and code fields"
+    },
+    "metadata": {
+      "special_structure": true,
+      "requires_different_processing": true,
+      "processing_note": "Each example should be processed separately for better retrieval"
+    },
+    "descricao_processada": "usage_examples coleção do Google ADK contendo exemplos práticos de implementação de agentes. Parte da documentação principal, que fornece guias e referências para desenvolvimento com o ADK. Trabalha em conjunto com todos os módulos do ADK incluindo agents, tools, sessions. É usado para aprender padrões de implementação, copiar código funcional e entender casos de uso reais. Contém 5 exemplos principais: basic_agent (agente básico), agent_with_tools (agente com ferramentas), running_agent (executando agente), openapi_tools (ferramentas OpenAPI), mcp_tools (ferramentas MCP). Erros comuns incluem: 'exemplo não funciona (example not working)', 'código desatualizado (outdated code)', 'dependência não encontrada (dependency not found)'. Sintomas típicos são: código do exemplo falha ao executar, imports não funcionam, versão incompatível do ADK. Para solucionar, verifique se a versão do ADK está atualizada e se todas as dependências estão instaladas. Busque por este componente se encontrar problemas com exemplos de código, tutoriais ADK, getting started, código de referência, implementação de agente, como usar ADK."
+  },
+  {
+    "id": "key_concepts",
+    "type": "concepts_collection",
+    "hierarchy": {
+      "root": "key_concepts"
+    },
+    "descriptions": {
+      "collection": "Key concepts and definitions for ADK",
+      "title": "Google ADK API Reference - Python",
+      "description": "Google Agent Development Kit (ADK) API documentation for Python"
+    },
+    "content": {
+      "concept_count": 8,
+      "concept_names": [
+        "agents",
+        "tools",
+        "sessions",
+        "events",
+        "runners",
+        "artifacts",
+        "memory",
+        "planners"
+      ],
+      "structure_note": "Each concept contains a definition/explanation"
+    },
+    "metadata": {
+      "special_structure": true,
+      "requires_different_processing": true,
+      "processing_note": "Concepts are key-value pairs with explanatory text"
+    },
+    "descricao_processada": "Key Concepts coleção conceitual do Google ADK que define os 8 pilares fundamentais da arquitetura de agentes: agents (agentes), tools (ferramentas), sessions (sessões), events (eventos), runners (executores), artifacts (artefatos), memory (memória) e planners (planejadores). Parte da documentação central da API Python, que serve como glossário técnico e mapa conceitual para desenvolvedores. Trabalha como referência base para todos os módulos do ADK, conectando-se diretamente com google.adk.agents, google.adk.tools, google.adk.sessions e demais componentes. É usado para compreender a terminologia oficial, arquitetura geral do sistema e relacionamentos entre componentes. Cada conceito fornece definições claras e contexto de uso dentro do ecossistema ADK. Erros comuns incluem: 'conceito mal compreendido', 'confusão entre agent e runner', 'mistura de responsabilidades entre módulos', 'uso incorreto de terminologia em código'. Sintomas típicos são: implementação inconsistente da arquitetura, dificuldade para navegar na documentação, código que não segue os padrões ADK, erros de design conceitual. Para solucionar, consulte esta seção antes de implementar qualquer funcionalidade e use a terminologia oficial em variáveis e comentários. Busque por este componente se encontrar problemas com arquitetura ADK, glossário técnico, conceitos fundamentais, terminologia oficial, design patterns, estrutura do framework."
+  }
+]
