@@ -10,9 +10,9 @@ from pathlib import Path
 
 def main():
     # Caminhos dos arquivos
-    descricao_path = Path("/Users/institutorecriare/VSCodeProjects/dados/novos/novos_resultados/descricao_processada_2.json")
-    dados_path = Path("/Users/institutorecriare/VSCodeProjects/dados/novos/dados/dados.json")
-    output_path = Path("/Users/institutorecriare/VSCodeProjects/dados/dados_processados.json")
+    descricao_path = Path("/Users/institutorecriare/VSCodeProjects/dados/novos/novos_resultados/descricao_processada_1.json")
+    dados_path = Path("/Users/institutorecriare/VSCodeProjects/dados/dados_processados3.json")
+    output_path = Path("/Users/institutorecriare/VSCodeProjects/dados/dados_processados3_com_descricao.json")
     
     print("Lendo arquivo de descrições processadas...")
     with open(descricao_path, 'r', encoding='utf-8') as f:

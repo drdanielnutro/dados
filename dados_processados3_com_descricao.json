@@ -1,0 +1,2696 @@
+[
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "BaseAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "Base class for all agents in Agent Development Kit",
+      "methods": [
+        {
+          "method": "find_agent",
+          "description": "Finds the agent with the given name in this agent and its descendants"
+        },
+        {
+          "method": "find_sub_agent",
+          "description": "Finds the agent with the given name in this agent's descendants"
+        },
+        {
+          "method": "run_async",
+          "description": "Entry method to run an agent via text-based conversation"
+        },
+        {
+          "method": "run_live",
+          "description": "Entry method to run an agent via video/audio-based conversation"
+        }
+      ],
+      "fields": [
+        {
+          "field": "name",
+          "description": "The agent's name. Must be a Python identifier and unique within the agent tree. Cannot be 'user'."
+        },
+        {
+          "field": "description",
+          "description": "Description about the agent's capability. Used by the model to determine whether to delegate control."
+        },
+        {
+          "field": "parent_agent",
+          "description": "The parent agent of this agent. An agent can only be added as sub-agent once."
+        },
+        {
+          "field": "sub_agents",
+          "description": "The sub-agents of this agent"
+        },
+        {
+          "field": "before_agent_callback",
+          "description": "Callback invoked before the agent run"
+        },
+        {
+          "field": "after_agent_callback",
+          "description": "Callback invoked after the agent run"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "BaseAgent",
+      "class_data": {
+        "description": "Base class for all agents in Agent Development Kit",
+        "type": "pydantic_model",
+        "fields": {
+          "name": {
+            "type": "str",
+            "required": true,
+            "description": "The agent's name. Must be a Python identifier and unique within the agent tree. Cannot be 'user'."
+          },
+          "description": {
+            "type": "str",
+            "default": "",
+            "description": "Description about the agent's capability. Used by the model to determine whether to delegate control."
+          },
+          "parent_agent": {
+            "type": "Optional[BaseAgent]",
+            "default": null,
+            "description": "The parent agent of this agent. An agent can only be added as sub-agent once."
+          },
+          "sub_agents": {
+            "type": "list[BaseAgent]",
+            "description": "The sub-agents of this agent"
+          },
+          "before_agent_callback": {
+            "type": "Optional[BeforeAgentCallback]",
+            "default": null,
+            "description": "Callback invoked before the agent run"
+          },
+          "after_agent_callback": {
+            "type": "Optional[AfterAgentCallback]",
+            "default": null,
+            "description": "Callback invoked after the agent run"
+          }
+        },
+        "methods": {
+          "find_agent": {
+            "description": "Finds the agent with the given name in this agent and its descendants",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[BaseAgent]"
+          },
+          "find_sub_agent": {
+            "description": "Finds the agent with the given name in this agent's descendants",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[BaseAgent]"
+          },
+          "run_async": {
+            "description": "Entry method to run an agent via text-based conversation",
+            "parameters": {
+              "parent_context": "InvocationContext"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "run_live": {
+            "description": "Entry method to run an agent via video/audio-based conversation",
+            "parameters": {
+              "parent_context": "InvocationContext"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.agents.BaseAgent",
+    "descricao_processada": "BaseAgent class from google.adk.agents module for base functionality of all agents in Agent Development Kit. Type: pydantic_model. Methods: find_agent, find_sub_agent, run_async, run_live. Fields: name, description, parent_agent, sub_agents, before_agent_callback, after_agent_callback. Search terms: base agent, agent hierarchy, agent tree, delegation, conversation, multimodal, async execution, agent management, parent child relationship, sub agents, callbacks, text conversation, video audio conversation, agent discovery, agent lookup."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "LlmAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "LLM-based Agent",
+      "fields": [
+        {
+          "field": "model",
+          "description": "The model to use for the agent. When not set, inherits from ancestor."
+        },
+        {
+          "field": "instruction",
+          "description": "Instructions for the LLM model, guiding the agent's behavior"
+        },
+        {
+          "field": "global_instruction",
+          "description": "Instructions for all agents in the entire agent tree. Only takes effect in root agent."
+        },
+        {
+          "field": "tools",
+          "description": "Tools available to this agent"
+        },
+        {
+          "field": "generate_content_config",
+          "description": "Additional content generation configurations"
+        },
+        {
+          "field": "disallow_transfer_to_parent",
+          "description": "Disallows LLM-controlled transferring to the parent agent"
+        },
+        {
+          "field": "disallow_transfer_to_peers",
+          "description": "Disallows LLM-controlled transferring to the peer agents"
+        },
+        {
+          "field": "include_contents",
+          "description": "Whether to include contents in the model request"
+        },
+        {
+          "field": "input_schema",
+          "description": "The input schema when agent is used as a tool"
+        },
+        {
+          "field": "output_schema",
+          "description": "The output schema when agent replies"
+        },
+        {
+          "field": "output_key",
+          "description": "Key in session state to store agent output"
+        },
+        {
+          "field": "planner",
+          "description": "Instructs the agent to make a plan and execute it step by step"
+        },
+        {
+          "field": "code_executor",
+          "description": "Allow agent to execute code blocks from model responses"
+        },
+        {
+          "field": "examples",
+          "description": "Few-shot examples for the agent"
+        },
+        {
+          "field": "before_model_callback",
+          "description": "Callback(s) called before calling the LLM"
+        },
+        {
+          "field": "after_model_callback",
+          "description": "Callback(s) called after calling the LLM"
+        },
+        {
+          "field": "before_tool_callback",
+          "description": "Called before the tool is called"
+        },
+        {
+          "field": "after_tool_callback",
+          "description": "Called after the tool is called"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "LlmAgent",
+      "class_data": {
+        "description": "LLM-based Agent",
+        "base_class": "BaseAgent",
+        "type": "pydantic_model",
+        "fields": {
+          "model": {
+            "type": "Union[str, BaseLlm]",
+            "default": "",
+            "description": "The model to use for the agent. When not set, inherits from ancestor."
+          },
+          "instruction": {
+            "type": "Union[str, InstructionProvider]",
+            "default": "",
+            "description": "Instructions for the LLM model, guiding the agent's behavior"
+          },
+          "global_instruction": {
+            "type": "Union[str, InstructionProvider]",
+            "default": "",
+            "description": "Instructions for all agents in the entire agent tree. Only takes effect in root agent."
+          },
+          "tools": {
+            "type": "list[ToolUnion]",
+            "description": "Tools available to this agent"
+          },
+          "generate_content_config": {
+            "type": "Optional[types.GenerateContentConfig]",
+            "default": null,
+            "description": "Additional content generation configurations"
+          },
+          "disallow_transfer_to_parent": {
+            "type": "bool",
+            "default": false,
+            "description": "Disallows LLM-controlled transferring to the parent agent"
+          },
+          "disallow_transfer_to_peers": {
+            "type": "bool",
+            "default": false,
+            "description": "Disallows LLM-controlled transferring to the peer agents"
+          },
+          "include_contents": {
+            "type": "Literal['default', 'none']",
+            "default": "default",
+            "description": "Whether to include contents in the model request"
+          },
+          "input_schema": {
+            "type": "Optional[type[BaseModel]]",
+            "default": null,
+            "description": "The input schema when agent is used as a tool"
+          },
+          "output_schema": {
+            "type": "Optional[type[BaseModel]]",
+            "default": null,
+            "description": "The output schema when agent replies"
+          },
+          "output_key": {
+            "type": "Optional[str]",
+            "default": null,
+            "description": "Key in session state to store agent output"
+          },
+          "planner": {
+            "type": "Optional[BasePlanner]",
+            "default": null,
+            "description": "Instructs the agent to make a plan and execute it step by step"
+          },
+          "code_executor": {
+            "type": "Optional[BaseCodeExecutor]",
+            "default": null,
+            "description": "Allow agent to execute code blocks from model responses"
+          },
+          "examples": {
+            "type": "Optional[ExamplesUnion]",
+            "default": null,
+            "description": "Few-shot examples for the agent"
+          },
+          "before_model_callback": {
+            "type": "Optional[BeforeModelCallback]",
+            "default": null,
+            "description": "Callback(s) called before calling the LLM"
+          },
+          "after_model_callback": {
+            "type": "Optional[AfterModelCallback]",
+            "default": null,
+            "description": "Callback(s) called after calling the LLM"
+          },
+          "before_tool_callback": {
+            "type": "Optional[BeforeToolCallback]",
+            "default": null,
+            "description": "Called before the tool is called"
+          },
+          "after_tool_callback": {
+            "type": "Optional[AfterToolCallback]",
+            "default": null,
+            "description": "Called after the tool is called"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.agents.LlmAgent",
+    "descricao_processada": "LlmAgent class from google.adk.agents module for creating LLM-based agents that can interact with language models and use tools. Inherits from BaseAgent. Type: pydantic_model. Fields: model, instruction, global_instruction, tools, generate_content_config, disallow_transfer_to_parent, disallow_transfer_to_peers, include_contents, input_schema, output_schema, output_key, planner, code_executor, examples, before_model_callback, after_model_callback, before_tool_callback, after_tool_callback. Search terms: LLM agent, language model agent, AI agent, chatbot, conversational agent, tool usage, model integration, instruction following, agent callbacks, code execution, planning agent, few-shot learning, schema validation, agent transfer control."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "LoopAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in a loop until escalation or max_iterations reached",
+      "fields": [
+        {
+          "field": "max_iterations",
+          "description": "Maximum number of iterations. If not set, runs indefinitely until escalation."
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "LoopAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in a loop until escalation or max_iterations reached",
+        "base_class": "BaseAgent",
+        "fields": {
+          "max_iterations": {
+            "type": "Optional[int]",
+            "default": null,
+            "description": "Maximum number of iterations. If not set, runs indefinitely until escalation."
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.agents.LoopAgent",
+    "descricao_processada": "LoopAgent class from google.adk.agents module for running sub-agents in a loop until escalation or maximum iterations reached. Inherits from BaseAgent. Fields: max_iterations. Search terms: loop agent, iteration control, repeat execution, cycle management, max iterations, execution limit, sub-agents coordination, escalation handling, shell agent, looping behavior, iterative processing, agent orchestration."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "ParallelAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in parallel in isolated manner. Useful for multiple perspectives or attempts on a single task."
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "ParallelAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in parallel in isolated manner. Useful for multiple perspectives or attempts on a single task.",
+        "base_class": "BaseAgent"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.agents.ParallelAgent",
+    "descricao_processada": "ParallelAgent class from google.adk.agents module for running sub-agents in parallel in isolated manner. Inherits from BaseAgent. Useful for multiple perspectives or attempts on a single task. Search terms: parallel agent, concurrent execution, isolated agents, multiple perspectives, parallel processing, simultaneous tasks, shell agent, concurrent attempts, parallel workflows, multi-threading."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.agents",
+      "class": "SequentialAgent"
+    },
+    "descriptions": {
+      "module": "Module containing agent classes for the Google ADK",
+      "class": "A shell agent that runs its sub-agents in sequence"
+    },
+    "content": {
+      "module_name": "google.adk.agents",
+      "module_description": "Module containing agent classes for the Google ADK",
+      "class_name": "SequentialAgent",
+      "class_data": {
+        "description": "A shell agent that runs its sub-agents in sequence",
+        "base_class": "BaseAgent"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.agents.SequentialAgent",
+    "descricao_processada": "SequentialAgent class from google.adk.agents module for running sub-agents in sequence one after another. Inherits from BaseAgent. Search terms: sequential agent, sequence execution, ordered execution, step by step, chain agents, sequential processing, agent pipeline, workflow, orchestration, shell agent, agent composition, linear execution."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "BaseArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "Abstract base class for artifact services",
+      "methods": [
+        {
+          "method": "save_artifact",
+          "description": "Saves an artifact to storage"
+        },
+        {
+          "method": "load_artifact",
+          "description": "Gets an artifact from storage"
+        },
+        {
+          "method": "list_artifact_keys",
+          "description": "Lists all artifact filenames within a session"
+        },
+        {
+          "method": "list_versions",
+          "description": "Lists all versions of an artifact"
+        },
+        {
+          "method": "delete_artifact",
+          "description": "Deletes an artifact"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "BaseArtifactService",
+      "class_data": {
+        "description": "Abstract base class for artifact services",
+        "type": "abstract",
+        "methods": {
+          "save_artifact": {
+            "description": "Saves an artifact to storage",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str",
+              "artifact": "Part"
+            },
+            "return_type": "int"
+          },
+          "load_artifact": {
+            "description": "Gets an artifact from storage",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str",
+              "version": "Optional[int]"
+            },
+            "return_type": "Optional[Part]"
+          },
+          "list_artifact_keys": {
+            "description": "Lists all artifact filenames within a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "list[str]"
+          },
+          "list_versions": {
+            "description": "Lists all versions of an artifact",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str"
+            },
+            "return_type": "list[int]"
+          },
+          "delete_artifact": {
+            "description": "Deletes an artifact",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "filename": "str"
+            },
+            "return_type": "None"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.artifacts.BaseArtifactService",
+    "descricao_processada": "BaseArtifactService class from google.adk.artifacts module for abstract base functionality of artifact management services. Type: abstract. Methods: save_artifact, load_artifact, list_artifact_keys, list_versions, delete_artifact. Search terms: artifact service, file storage, artifact management, save files, load files, version control, session artifacts, storage abstraction, file versioning, artifact persistence, document storage, file operations."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "InMemoryArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "An in-memory implementation of the artifact service",
+      "fields": [
+        {
+          "field": "artifacts",
+          "description": "In-memory storage for artifacts"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "InMemoryArtifactService",
+      "class_data": {
+        "description": "An in-memory implementation of the artifact service",
+        "base_class": "BaseArtifactService",
+        "fields": {
+          "artifacts": {
+            "type": "dict[str, list[Part]]",
+            "description": "In-memory storage for artifacts"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.artifacts.InMemoryArtifactService",
+    "descricao_processada": "InMemoryArtifactService class from google.adk.artifacts module for in-memory implementation of artifact management services. Inherits from BaseArtifactService. Fields: artifacts. Search terms: in-memory artifacts, artifact service, memory storage, artifact management, temporary artifacts, runtime artifacts, artifact caching, memory-based storage, artifact repository, file management."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.artifacts",
+      "class": "GcsArtifactService"
+    },
+    "descriptions": {
+      "module": "Module for artifact management services",
+      "class": "An artifact service implementation using Google Cloud Storage (GCS)"
+    },
+    "content": {
+      "module_name": "google.adk.artifacts",
+      "module_description": "Module for artifact management services",
+      "class_name": "GcsArtifactService",
+      "class_data": {
+        "description": "An artifact service implementation using Google Cloud Storage (GCS)",
+        "base_class": "BaseArtifactService",
+        "constructor_params": {
+          "bucket_name": "str",
+          "**kwargs": "Keyword arguments for GCS client"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.artifacts.GcsArtifactService",
+    "descricao_processada": "GcsArtifactService class from google.adk.artifacts module for artifact management using Google Cloud Storage as backend. Inherits from BaseArtifactService. Constructor parameters: bucket_name, kwargs for GCS client configuration. Search terms: GCS artifact service, Google Cloud Storage, artifact management, file storage, cloud storage, bucket storage, artifact persistence, storage backend, GCS integration, cloud artifacts."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "BaseCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "Abstract base class for all code executors",
+      "methods": [
+        {
+          "method": "execute_code",
+          "description": "Executes code and returns result"
+        }
+      ],
+      "fields": [
+        {
+          "field": "optimize_data_file",
+          "description": "If true, extract and process data files from model request. Supports text/csv."
+        },
+        {
+          "field": "stateful",
+          "description": "Whether the code executor is stateful"
+        },
+        {
+          "field": "error_retry_attempts",
+          "description": "Number of retry attempts on consecutive code execution errors"
+        },
+        {
+          "field": "code_block_delimiters",
+          "description": "Enclosing delimiters to identify code blocks"
+        },
+        {
+          "field": "execution_result_delimiters",
+          "description": "Delimiters to format code execution result"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "BaseCodeExecutor",
+      "class_data": {
+        "description": "Abstract base class for all code executors",
+        "type": "pydantic_model",
+        "fields": {
+          "optimize_data_file": {
+            "type": "bool",
+            "default": false,
+            "description": "If true, extract and process data files from model request. Supports text/csv."
+          },
+          "stateful": {
+            "type": "bool",
+            "default": false,
+            "description": "Whether the code executor is stateful"
+          },
+          "error_retry_attempts": {
+            "type": "int",
+            "default": 2,
+            "description": "Number of retry attempts on consecutive code execution errors"
+          },
+          "code_block_delimiters": {
+            "type": "List[tuple[str, str]]",
+            "default": [
+              [
+                "```tool_code\\n",
+                "\\n```"
+              ],
+              [
+                "```python\\n",
+                "\\n```"
+              ]
+            ],
+            "description": "Enclosing delimiters to identify code blocks"
+          },
+          "execution_result_delimiters": {
+            "type": "tuple[str, str]",
+            "default": [
+              "```tool_output\\n",
+              "\\n```"
+            ],
+            "description": "Delimiters to format code execution result"
+          }
+        },
+        "methods": {
+          "execute_code": {
+            "description": "Executes code and returns result",
+            "parameters": {
+              "invocation_context": "InvocationContext",
+              "code_execution_input": "CodeExecutionInput"
+            },
+            "return_type": "CodeExecutionResult",
+            "abstract": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.code_executors.BaseCodeExecutor",
+    "descricao_processada": "BaseCodeExecutor class from google.adk.code_executors module for abstract base functionality of all code executors in Agent Development Kit. Type: pydantic_model. Methods: execute_code. Fields: optimize_data_file, stateful, error_retry_attempts, code_block_delimiters, execution_result_delimiters. Search terms: code executor, abstract base class, code execution, python execution, code runner, stateful execution, error retry, data file processing, CSV support, code blocks, delimiters, execution results, container execution, unsafe execution, vertex ai execution."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "UnsafeLocalCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that unsafely executes code in the current local context"
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "UnsafeLocalCodeExecutor",
+      "class_data": {
+        "description": "A code executor that unsafely executes code in the current local context",
+        "base_class": "BaseCodeExecutor"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.code_executors.UnsafeLocalCodeExecutor",
+    "descricao_processada": "UnsafeLocalCodeExecutor class from google.adk.code_executors module for executing code unsafely in the current local context. Inherits from BaseCodeExecutor. Search terms: unsafe code execution, local execution, code runner, dynamic execution, script execution, local context, code interpreter, unsafe operations, development executor, local environment."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "ContainerCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that uses a custom container to execute code",
+      "fields": [
+        {
+          "field": "base_url",
+          "description": "Base URL of user hosted Docker client"
+        },
+        {
+          "field": "image",
+          "description": "Tag of predefined or custom image to run on container"
+        },
+        {
+          "field": "docker_path",
+          "description": "Path to directory containing Dockerfile"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "ContainerCodeExecutor",
+      "class_data": {
+        "description": "A code executor that uses a custom container to execute code",
+        "base_class": "BaseCodeExecutor",
+        "fields": {
+          "base_url": {
+            "type": "Optional[str]",
+            "default": null,
+            "description": "Base URL of user hosted Docker client"
+          },
+          "image": {
+            "type": "str",
+            "description": "Tag of predefined or custom image to run on container"
+          },
+          "docker_path": {
+            "type": "str",
+            "description": "Path to directory containing Dockerfile"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.code_executors.ContainerCodeExecutor",
+    "descricao_processada": "ContainerCodeExecutor class from google.adk.code_executors module for executing code using custom Docker containers. Inherits from BaseCodeExecutor. Fields: base_url, image, docker_path. Search terms: container code executor, docker execution, containerized code, custom container, docker client, container image, dockerfile, isolated execution, sandboxed code, docker integration, code isolation, container runtime."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.code_executors",
+      "class": "VertexAiCodeExecutor"
+    },
+    "descriptions": {
+      "module": "Module for code execution functionality",
+      "class": "A code executor that uses Vertex Code Interpreter Extension",
+      "fields": [
+        {
+          "field": "resource_name",
+          "description": "Resource name of code interpreter extension. Format: projects/123/locations/us-central1/extensions/456"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.code_executors",
+      "module_description": "Module for code execution functionality",
+      "class_name": "VertexAiCodeExecutor",
+      "class_data": {
+        "description": "A code executor that uses Vertex Code Interpreter Extension",
+        "base_class": "BaseCodeExecutor",
+        "fields": {
+          "resource_name": {
+            "type": "str",
+            "description": "Resource name of code interpreter extension. Format: projects/123/locations/us-central1/extensions/456"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.code_executors.VertexAiCodeExecutor",
+    "descricao_processada": "VertexAiCodeExecutor class from google.adk.code_executors module for executing code using Vertex AI Code Interpreter Extension. Inherits from BaseCodeExecutor. Fields: resource_name. Search terms: vertex ai code executor, code interpreter, vertex extension, code execution, google cloud, vertex ai, interpreter extension, code runner, cloud code execution, vertex code interpreter."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.evaluation",
+      "class": "AgentEvaluator"
+    },
+    "descriptions": {
+      "module": "Module for agent evaluation functionality",
+      "class": "An evaluator for Agents, mainly intended for helping with test cases",
+      "methods": [
+        {
+          "method": "evaluate",
+          "description": "Evaluates an Agent given eval data"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.evaluation",
+      "module_description": "Module for agent evaluation functionality",
+      "class_name": "AgentEvaluator",
+      "class_data": {
+        "description": "An evaluator for Agents, mainly intended for helping with test cases",
+        "methods": {
+          "evaluate": {
+            "description": "Evaluates an Agent given eval data",
+            "parameters": {
+              "agent_module": "str - Path to python module containing agent",
+              "eval_dataset_file_path_or_dir": "str - Path to eval dataset file or directory",
+              "num_runs": "int = 2",
+              "agent_name": "Optional[str]",
+              "initial_session_file": "Optional[str]"
+            },
+            "static": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.evaluation.AgentEvaluator",
+    "descricao_processada": "AgentEvaluator class from google.adk.evaluation module for evaluating agents and helping with test cases. Methods: evaluate. The evaluate method takes agent module path, evaluation dataset file or directory, number of runs, optional agent name, and initial session file parameters. Search terms: agent evaluation, testing, test cases, evaluation dataset, agent testing framework, performance evaluation, agent validation, eval data, test automation, agent assessment."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.events",
+      "class": "Event"
+    },
+    "descriptions": {
+      "module": "Module for event handling",
+      "class": "Represents an event in a conversation between agents and users",
+      "methods": [
+        {
+          "method": "get_function_calls",
+          "description": "Returns the function calls in the event"
+        },
+        {
+          "method": "get_function_responses",
+          "description": "Returns the function responses in the event"
+        },
+        {
+          "method": "is_final_response",
+          "description": "Returns whether the event is the final response"
+        }
+      ],
+      "fields": [
+        {
+          "field": "invocation_id",
+          "description": "The invocation ID of the event"
+        },
+        {
+          "field": "author",
+          "description": "'user' or agent name, indicating who appended the event"
+        },
+        {
+          "field": "actions",
+          "description": "The actions taken by the agent"
+        },
+        {
+          "field": "long_running_tool_ids",
+          "description": "IDs of long running function calls"
+        },
+        {
+          "field": "branch",
+          "description": "The branch of the event (e.g., agent_1.agent_2.agent_3)"
+        },
+        {
+          "field": "id",
+          "description": "Unique identifier of the event"
+        },
+        {
+          "field": "timestamp",
+          "description": "Timestamp of the event"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.events",
+      "module_description": "Module for event handling",
+      "class_name": "Event",
+      "class_data": {
+        "description": "Represents an event in a conversation between agents and users",
+        "base_class": "LlmResponse",
+        "type": "pydantic_model",
+        "fields": {
+          "invocation_id": {
+            "type": "str",
+            "default": "",
+            "description": "The invocation ID of the event"
+          },
+          "author": {
+            "type": "str",
+            "required": true,
+            "description": "'user' or agent name, indicating who appended the event"
+          },
+          "actions": {
+            "type": "EventActions",
+            "description": "The actions taken by the agent"
+          },
+          "long_running_tool_ids": {
+            "type": "Optional[set[str]]",
+            "description": "IDs of long running function calls"
+          },
+          "branch": {
+            "type": "Optional[str]",
+            "description": "The branch of the event (e.g., agent_1.agent_2.agent_3)"
+          },
+          "id": {
+            "type": "str",
+            "default": "",
+            "description": "Unique identifier of the event"
+          },
+          "timestamp": {
+            "type": "float",
+            "description": "Timestamp of the event"
+          }
+        },
+        "methods": {
+          "get_function_calls": {
+            "description": "Returns the function calls in the event",
+            "return_type": "list[FunctionCall]"
+          },
+          "get_function_responses": {
+            "description": "Returns the function responses in the event",
+            "return_type": "list[FunctionResponse]"
+          },
+          "is_final_response": {
+            "description": "Returns whether the event is the final response",
+            "return_type": "bool"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.events.Event",
+    "descricao_processada": "Event class from google.adk.events module for representing events in conversations between agents and users. Inherits from LlmResponse. Type: pydantic_model. Methods: get_function_calls, get_function_responses, is_final_response. Fields: invocation_id, author, actions, long_running_tool_ids, branch, id, timestamp. Search terms: conversation event, agent communication, user interaction, event handling, function calls, function responses, final response, invocation tracking, event author, agent actions, long running tools, event branch, event timestamp, conversation flow, message tracking."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.events",
+      "class": "EventActions"
+    },
+    "descriptions": {
+      "module": "Module for event handling",
+      "class": "Represents the actions attached to an event",
+      "fields": [
+        {
+          "field": "skip_summarization",
+          "description": "If true, won't call model to summarize function response"
+        },
+        {
+          "field": "state_delta",
+          "description": "Updates state with given delta"
+        },
+        {
+          "field": "artifact_delta",
+          "description": "Updates artifact. Key is filename, value is version."
+        },
+        {
+          "field": "transfer_to_agent",
+          "description": "If set, transfers to specified agent"
+        },
+        {
+          "field": "escalate",
+          "description": "Agent is escalating to higher level agent"
+        },
+        {
+          "field": "requested_auth_configs",
+          "description": "Authentication configurations requested by tool responses"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.events",
+      "module_description": "Module for event handling",
+      "class_name": "EventActions",
+      "class_data": {
+        "description": "Represents the actions attached to an event",
+        "type": "pydantic_model",
+        "fields": {
+          "skip_summarization": {
+            "type": "Optional[bool]",
+            "description": "If true, won't call model to summarize function response"
+          },
+          "state_delta": {
+            "type": "dict[str, object]",
+            "description": "Updates state with given delta"
+          },
+          "artifact_delta": {
+            "type": "dict[str, int]",
+            "description": "Updates artifact. Key is filename, value is version."
+          },
+          "transfer_to_agent": {
+            "type": "Optional[str]",
+            "description": "If set, transfers to specified agent"
+          },
+          "escalate": {
+            "type": "Optional[bool]",
+            "description": "Agent is escalating to higher level agent"
+          },
+          "requested_auth_configs": {
+            "type": "dict[str, AuthConfig]",
+            "description": "Authentication configurations requested by tool responses"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.events.EventActions",
+    "descricao_processada": "EventActions class from google.adk.events module for representing actions attached to events in the Agent Development Kit. Type: pydantic_model. Fields: skip_summarization, state_delta, artifact_delta, transfer_to_agent, escalate, requested_auth_configs. Search terms: event actions, event handling, state updates, agent transfer, escalation, artifact management, authentication config, function response, summarization control, event-driven architecture."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "Example"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "A few-shot example",
+      "fields": [
+        {
+          "field": "input",
+          "description": "The input content for the example"
+        },
+        {
+          "field": "output",
+          "description": "The expected output content for the example"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "Example",
+      "class_data": {
+        "description": "A few-shot example",
+        "type": "pydantic_model",
+        "fields": {
+          "input": {
+            "type": "descricao_processsada",
+            "required": true,
+            "description": "The input content for the example"
+          },
+          "output": {
+            "type": "list[Content]",
+            "required": true,
+            "description": "The expected output content for the example"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.examples.Example",
+    "descricao_processada": "Example class from google.adk.examples module for representing few-shot examples with input and expected output content. Type: pydantic_model. Fields: input, output. Search terms: few-shot example, example management, input output pair, training example, sample data, content example, machine learning example, demonstration, template, pattern matching."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "BaseExampleProvider"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "Base class for example providers"
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "BaseExampleProvider",
+      "class_data": {
+        "description": "Base class for example providers",
+        "type": "abstract"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.examples.BaseExampleProvider",
+    "descricao_processada": "BaseExampleProvider class from google.adk.examples module for providing base functionality for example providers in Agent Development Kit. Type: abstract. Search terms: example provider, abstract base class, example management, provider pattern, example store, vertex ai examples, example handling, base provider, example system, provider interface."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.examples",
+      "class": "VertexAiExampleStore"
+    },
+    "descriptions": {
+      "module": "Module for example management",
+      "class": "Provides examples from Vertex example store"
+    },
+    "content": {
+      "module_name": "google.adk.examples",
+      "module_description": "Module for example management",
+      "class_name": "VertexAiExampleStore",
+      "class_data": {
+        "description": "Provides examples from Vertex example store",
+        "base_class": "BaseExampleProvider",
+        "constructor_params": {
+          "examples_store_name": "str - Format: projects/{project}/locations/{location}/exampleStores/{example_store}"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.examples.VertexAiExampleStore",
+    "descricao_processada": "VertexAiExampleStore class from google.adk.examples module for providing examples from Vertex AI example store. Inherits from BaseExampleProvider. Constructor requires examples_store_name parameter with format projects/{project}/locations/{location}/exampleStores/{example_store}. Search terms: vertex ai examples, example store, example provider, vertex ai integration, example management, training examples, machine learning examples, project examples, location-based examples."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "BaseMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "Base class for memory services",
+      "methods": [
+        {
+          "method": "add_session_to_memory",
+          "description": "Adds a session to the memory service"
+        },
+        {
+          "method": "search_memory",
+          "description": "Searches for sessions that match the query"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "BaseMemoryService",
+      "class_data": {
+        "description": "Base class for memory services",
+        "type": "abstract",
+        "methods": {
+          "add_session_to_memory": {
+            "description": "Adds a session to the memory service",
+            "parameters": {
+              "session": "Session"
+            },
+            "return_type": "None",
+            "abstract": true
+          },
+          "search_memory": {
+            "description": "Searches for sessions that match the query",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "query": "str"
+            },
+            "return_type": "SearchMemoryResponse",
+            "abstract": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.memory.BaseMemoryService",
+    "descricao_processada": "BaseMemoryService class from google.adk.memory module for providing base functionality for memory services that store and retrieve conversation sessions. Type: abstract. Methods: add_session_to_memory, search_memory. Search terms: memory service, session storage, conversation memory, search sessions, abstract base class, memory management, session persistence, query memory, conversation history, memory interface."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "InMemoryMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "An in-memory memory service for prototyping. Uses keyword matching instead of semantic search."
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "InMemoryMemoryService",
+      "class_data": {
+        "description": "An in-memory memory service for prototyping. Uses keyword matching instead of semantic search.",
+        "base_class": "BaseMemoryService"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.memory.InMemoryMemoryService",
+    "descricao_processada": "InMemoryMemoryService class from google.adk.memory module for in-memory memory service designed for prototyping and development. Inherits from BaseMemoryService. Uses keyword matching instead of semantic search for memory retrieval. Search terms: in-memory memory, prototype memory, keyword matching, memory service, temporary storage, development memory, non-persistent memory, keyword search, memory prototyping, local memory."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.memory",
+      "class": "VertexAiRagMemoryService"
+    },
+    "descriptions": {
+      "module": "Module for memory services",
+      "class": "A memory service that uses Vertex AI RAG for storage and retrieval"
+    },
+    "content": {
+      "module_name": "google.adk.memory",
+      "module_description": "Module for memory services",
+      "class_name": "VertexAiRagMemoryService",
+      "class_data": {
+        "description": "A memory service that uses Vertex AI RAG for storage and retrieval",
+        "base_class": "BaseMemoryService",
+        "constructor_params": {
+          "rag_corpus": "str - Format: projects/{project}/locations/{location}/ragCorpora/{rag_corpus_id}",
+          "similarity_top_k": "Optional[int]",
+          "vector_distance_threshold": "float = 10"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.memory.VertexAiRagMemoryService",
+    "descricao_processada": "VertexAiRagMemoryService class from google.adk.memory module for memory storage and retrieval using Vertex AI RAG (Retrieval-Augmented Generation). Inherits from BaseMemoryService. Constructor parameters: rag_corpus, similarity_top_k, vector_distance_threshold. Search terms: vertex ai rag, memory service, retrieval augmented generation, vector search, similarity search, memory storage, rag corpus, distance threshold, semantic memory, knowledge retrieval, ai memory."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "BaseLlm"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "The base LLM class",
+      "methods": [
+        {
+          "method": "supported_models",
+          "description": "Returns list of supported models in regex"
+        },
+        {
+          "method": "connect",
+          "description": "Creates a live connection to the LLM"
+        },
+        {
+          "method": "generate_content_async",
+          "description": "Generates content from given contents and tools"
+        }
+      ],
+      "fields": [
+        {
+          "field": "model",
+          "description": "Name of the LLM (e.g., gemini-1.5-flash)"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "BaseLlm",
+      "class_data": {
+        "description": "The base LLM class",
+        "type": "pydantic_model",
+        "fields": {
+          "model": {
+            "type": "str",
+            "required": true,
+            "description": "Name of the LLM (e.g., gemini-1.5-flash)"
+          }
+        },
+        "methods": {
+          "supported_models": {
+            "description": "Returns list of supported models in regex",
+            "return_type": "list[str]",
+            "static": true
+          },
+          "connect": {
+            "description": "Creates a live connection to the LLM",
+            "parameters": {
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "BaseLlmConnection"
+          },
+          "generate_content_async": {
+            "description": "Generates content from given contents and tools",
+            "parameters": {
+              "llm_request": "LlmRequest",
+              "stream": "bool = False"
+            },
+            "return_type": "AsyncGenerator[LlmResponse, None]",
+            "abstract": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.models.BaseLlm",
+    "descricao_processada": "BaseLlm class from google.adk.models module for base interface to support language models in Agent Development Kit. Type: pydantic_model. Methods: supported_models, connect, generate_content_async. Fields: model. Search terms: base LLM, language model, model interface, gemini, content generation, async generation, model connection, LLM registry, model support, AI models, text generation, model abstraction."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "Gemini"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "Integration for Gemini models",
+      "fields": [
+        {
+          "field": "model",
+          "description": "Name of the Gemini model"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "Gemini",
+      "class_data": {
+        "description": "Integration for Gemini models",
+        "base_class": "BaseLlm",
+        "fields": {
+          "model": {
+            "type": "str",
+            "default": "gemini-1.5-flash",
+            "description": "Name of the Gemini model"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.models.Gemini",
+    "descricao_processada": "Gemini class from google.adk.models module for integration with Google Gemini language models. Inherits from BaseLlm. Fields: model. Search terms: gemini model, google gemini, language model, llm integration, gemini-1.5-flash, model interface, ai model, generative ai, text generation, model wrapper, gemini api."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.models",
+      "class": "LLMRegistry"
+    },
+    "descriptions": {
+      "module": "Module defining the interface to support models",
+      "class": "Registry for LLMs",
+      "methods": [
+        {
+          "method": "new_llm",
+          "description": "Creates a new LLM instance"
+        },
+        {
+          "method": "register",
+          "description": "Registers a new LLM class"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.models",
+      "module_description": "Module defining the interface to support models",
+      "class_name": "LLMRegistry",
+      "class_data": {
+        "description": "Registry for LLMs",
+        "methods": {
+          "new_llm": {
+            "description": "Creates a new LLM instance",
+            "parameters": {
+              "model": "str"
+            },
+            "return_type": "BaseLlm",
+            "static": true
+          },
+          "register": {
+            "description": "Registers a new LLM class",
+            "parameters": {
+              "llm_cls": "Type[BaseLlm]"
+            },
+            "static": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.models.LLMRegistry",
+    "descricao_processada": "LLMRegistry class from google.adk.models module for managing and registering Large Language Model implementations in the Agent Development Kit. Methods: new_llm, register. Search terms: LLM registry, model registry, language model management, model factory, LLM registration, model instantiation, BaseLlm, Gemini, model interface, AI model management, language model creation."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "BasePlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Abstract base class for all planners",
+      "methods": [
+        {
+          "method": "build_planning_instruction",
+          "description": "Builds system instruction for planning"
+        },
+        {
+          "method": "process_planning_response",
+          "description": "Processes the LLM response for planning"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "BasePlanner",
+      "class_data": {
+        "description": "Abstract base class for all planners",
+        "type": "abstract",
+        "methods": {
+          "build_planning_instruction": {
+            "description": "Builds system instruction for planning",
+            "parameters": {
+              "readonly_context": "ReadonlyContext",
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "Optional[str]",
+            "abstract": true
+          },
+          "process_planning_response": {
+            "description": "Processes the LLM response for planning",
+            "parameters": {
+              "callback_context": "CallbackContext",
+              "response_parts": "List[Part]"
+            },
+            "return_type": "Optional[List[Part]]",
+            "abstract": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.planners.BasePlanner",
+    "descricao_processada": "BasePlanner class from google.adk.planners module for abstract base functionality of all planners in Agent Development Kit. Type: abstract. Methods: build_planning_instruction, process_planning_response. Search terms: base planner, abstract planner, planning functionality, system instruction, LLM response processing, planning interface, planner hierarchy, agent planning, instruction building, response processing, readonly context, callback context."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "BuiltInPlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Built-in planner that uses model's built-in thinking features"
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "BuiltInPlanner",
+      "class_data": {
+        "description": "Built-in planner that uses model's built-in thinking features",
+        "base_class": "BasePlanner",
+        "constructor_params": {
+          "thinking_config": "ThinkingConfig"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.planners.BuiltInPlanner",
+    "descricao_processada": "BuiltInPlanner class from google.adk.planners module for utilizing model's built-in thinking features for planning tasks. Inherits from BasePlanner. Constructor parameters: thinking_config. Search terms: built-in planner, model thinking, planning functionality, thinking config, native planning, model reasoning, automatic planning, built-in capabilities, planner implementation, thinking features."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.planners",
+      "class": "PlanReActPlanner"
+    },
+    "descriptions": {
+      "module": "Module for planning functionality",
+      "class": "Plan-Re-Act planner that constrains LLM to generate plan before action"
+    },
+    "content": {
+      "module_name": "google.adk.planners",
+      "module_description": "Module for planning functionality",
+      "class_name": "PlanReActPlanner",
+      "class_data": {
+        "description": "Plan-Re-Act planner that constrains LLM to generate plan before action",
+        "base_class": "BasePlanner"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.planners.PlanReActPlanner",
+    "descricao_processada": "PlanReActPlanner class from google.adk.planners module for constraining LLM to generate plan before taking action. Inherits from BasePlanner. Search terms: plan react planner, planning before action, LLM constraints, structured planning, action planning, reasoning planner, plan generation, deliberative planning, strategic thinking, plan-based execution."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.runners",
+      "class": "Runner"
+    },
+    "descriptions": {
+      "module": "Module for running agents",
+      "class": "The Runner class manages agent execution within a session",
+      "methods": [
+        {
+          "method": "run",
+          "description": "Runs the agent (sync interface for testing)"
+        },
+        {
+          "method": "run_async",
+          "description": "Main entry method to run agent"
+        },
+        {
+          "method": "run_live",
+          "description": "Runs agent in live mode (experimental)"
+        },
+        {
+          "method": "close_session",
+          "description": "Closes session and adds to memory service"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.runners",
+      "module_description": "Module for running agents",
+      "class_name": "Runner",
+      "class_data": {
+        "description": "The Runner class manages agent execution within a session",
+        "constructor_params": {
+          "app_name": "str",
+          "agent": "BaseAgent",
+          "artifact_service": "Optional[BaseArtifactService]",
+          "session_service": "BaseSessionService",
+          "memory_service": "Optional[BaseMemoryService]"
+        },
+        "methods": {
+          "run": {
+            "description": "Runs the agent (sync interface for testing)",
+            "parameters": {
+              "user_id": "str",
+              "session_id": "str",
+              "new_message": "Message",
+              "run_config": "RunConfig"
+            },
+            "return_type": "Generator[Event, None, None]"
+          },
+          "run_async": {
+            "description": "Main entry method to run agent",
+            "parameters": {
+              "user_id": "str",
+              "session_id": "str",
+              "new_message": "Message",
+              "run_config": "RunConfig"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "run_live": {
+            "description": "Runs agent in live mode (experimental)",
+            "parameters": {
+              "session": "Session",
+              "live_request_queue": "Queue",
+              "run_config": "RunConfig"
+            },
+            "return_type": "AsyncGenerator[Event, None]"
+          },
+          "close_session": {
+            "description": "Closes session and adds to memory service",
+            "parameters": {
+              "session": "Session"
+            }
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.runners.Runner",
+    "descricao_processada": "Runner class from google.adk.runners module for managing agent execution within a session. Methods: run, run_async, run_live, close_session. Constructor parameters: app_name, agent, artifact_service, session_service, memory_service. Provides both synchronous and asynchronous execution modes with experimental live mode support. Search terms: runner, agent execution, session management, async runner, sync runner, live mode, agent orchestration, execution manager, session service, memory service, artifact service, event generator."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.runners",
+      "class": "InMemoryRunner"
+    },
+    "descriptions": {
+      "module": "Module for running agents",
+      "class": "In-memory Runner for testing and development"
+    },
+    "content": {
+      "module_name": "google.adk.runners",
+      "module_description": "Module for running agents",
+      "class_name": "InMemoryRunner",
+      "class_data": {
+        "description": "In-memory Runner for testing and development",
+        "base_class": "Runner",
+        "constructor_params": {
+          "agent": "BaseAgent",
+          "app_name": "str = 'InMemoryRunner'"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.runners.InMemoryRunner",
+    "descricao_processada": "InMemoryRunner class from google.adk.runners module for testing and development of agents in memory without external dependencies. Inherits from Runner. Constructor parameters: agent (BaseAgent), app_name (str). Search terms: in memory runner, testing runner, development runner, agent testing, memory execution, local testing, runner implementation, agent development, test environment, memory-based execution."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "Session"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Represents a series of interactions between a user and agents",
+      "fields": [
+        {
+          "field": "id",
+          "description": "Unique identifier of the session"
+        },
+        {
+          "field": "app_name",
+          "description": "Name of the app"
+        },
+        {
+          "field": "user_id",
+          "description": "ID of the user"
+        },
+        {
+          "field": "state",
+          "description": "State of the session"
+        },
+        {
+          "field": "events",
+          "description": "Events of the session"
+        },
+        {
+          "field": "last_update_time",
+          "description": "Last update time of the session"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "Session",
+      "class_data": {
+        "description": "Represents a series of interactions between a user and agents",
+        "type": "pydantic_model",
+        "fields": {
+          "id": {
+            "type": "str",
+            "required": true,
+            "description": "Unique identifier of the session"
+          },
+          "app_name": {
+            "type": "str",
+            "required": true,
+            "description": "Name of the app"
+          },
+          "user_id": {
+            "type": "str",
+            "required": true,
+            "description": "ID of the user"
+          },
+          "state": {
+            "type": "dict[str, Any]",
+            "description": "State of the session"
+          },
+          "events": {
+            "type": "list[Event]",
+            "description": "Events of the session"
+          },
+          "last_update_time": {
+            "type": "float",
+            "default": 0.0,
+            "description": "Last update time of the session"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.Session",
+    "descricao_processada": "Session class from google.adk.sessions module for representing a series of interactions between a user and agents. Type: pydantic_model. Fields: id, app_name, user_id, state, events, last_update_time. Search terms: session management, user interactions, conversation session, session state, session events, user session, app session, session tracking, interaction history, session persistence, conversation context, user experience."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "BaseSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Base class for session services",
+      "methods": [
+        {
+          "method": "create_session",
+          "description": "Creates a new session"
+        },
+        {
+          "method": "get_session",
+          "description": "Gets a session"
+        },
+        {
+          "method": "delete_session",
+          "description": "Deletes a session"
+        },
+        {
+          "method": "list_sessions",
+          "description": "Lists all sessions"
+        },
+        {
+          "method": "list_events",
+          "description": "Lists events in a session"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "BaseSessionService",
+      "class_data": {
+        "description": "Base class for session services",
+        "type": "abstract",
+        "methods": {
+          "create_session": {
+            "description": "Creates a new session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "state": "Optional[dict]",
+              "session_id": "Optional[str]"
+            },
+            "return_type": "Session",
+            "abstract": true
+          },
+          "get_session": {
+            "description": "Gets a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str",
+              "config": "Optional[dict]"
+            },
+            "return_type": "Optional[Session]",
+            "abstract": true
+          },
+          "delete_session": {
+            "description": "Deletes a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "None",
+            "abstract": true
+          },
+          "list_sessions": {
+            "description": "Lists all sessions",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str"
+            },
+            "return_type": "ListSessionsResponse",
+            "abstract": true
+          },
+          "list_events": {
+            "description": "Lists events in a session",
+            "parameters": {
+              "app_name": "str",
+              "user_id": "str",
+              "session_id": "str"
+            },
+            "return_type": "ListEventsResponse",
+            "abstract": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.BaseSessionService",
+    "descricao_processada": "BaseSessionService class from google.adk.sessions module for providing base functionality for session management services. Type: abstract. Methods: create_session, get_session, delete_session, list_sessions, list_events. Search terms: session service, session management, abstract base class, session lifecycle, create session, get session, delete session, list sessions, session events, user sessions, app sessions, session storage, session persistence, session interface."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "InMemorySessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "An in-memory implementation of session service"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "InMemorySessionService",
+      "class_data": {
+        "description": "An in-memory implementation of session service",
+        "base_class": "BaseSessionService"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.InMemorySessionService",
+    "descricao_processada": "InMemorySessionService class from google.adk.sessions module for managing sessions using in-memory storage implementation. Inherits from BaseSessionService. Search terms: in-memory session, session service, memory storage, temporary sessions, session management, volatile storage, runtime sessions, session provider, memory-based persistence, session handling."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "DatabaseSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "A session service that uses a database for storage"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "DatabaseSessionService",
+      "class_data": {
+        "description": "A session service that uses a database for storage",
+        "base_class": "BaseSessionService",
+        "constructor_params": {
+          "db_url": "str"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.DatabaseSessionService",
+    "descricao_processada": "DatabaseSessionService class from google.adk.sessions module for managing sessions using database storage. Inherits from BaseSessionService. Constructor parameters: db_url. Search terms: database session service, persistent sessions, database storage, session persistence, db session management, database backend, session data storage, persistent state, database connection, session service implementation."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "VertexAiSessionService"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "Connects to the managed Vertex AI Session Service"
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "VertexAiSessionService",
+      "class_data": {
+        "description": "Connects to the managed Vertex AI Session Service",
+        "base_class": "BaseSessionService",
+        "constructor_params": {
+          "project": "Optional[str]",
+          "location": "Optional[str]"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.VertexAiSessionService",
+    "descricao_processada": "VertexAiSessionService class from google.adk.sessions module for connecting to the managed Vertex AI Session Service. Inherits from BaseSessionService. Constructor parameters: project, location. Search terms: vertex ai session, managed session service, google cloud, session management, cloud sessions, vertex integration, project location, session persistence, cloud storage, managed service."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.sessions",
+      "class": "State"
+    },
+    "descriptions": {
+      "module": "Module for session management",
+      "class": "A state dict that maintains current value and pending-commit delta",
+      "methods": [
+        {
+          "method": "get",
+          "description": "Returns value for given key"
+        },
+        {
+          "method": "update",
+          "description": "Updates state dict with given delta"
+        },
+        {
+          "method": "has_delta",
+          "description": "Whether state has pending delta"
+        },
+        {
+          "method": "to_dict",
+          "description": "Returns the state dict"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.sessions",
+      "module_description": "Module for session management",
+      "class_name": "State",
+      "class_data": {
+        "description": "A state dict that maintains current value and pending-commit delta",
+        "constants": {
+          "APP_PREFIX": "app:",
+          "USER_PREFIX": "user:",
+          "TEMP_PREFIX": "temp:"
+        },
+        "methods": {
+          "get": {
+            "description": "Returns value for given key",
+            "parameters": {
+              "key": "str",
+              "default": "Any = None"
+            },
+            "return_type": "Any"
+          },
+          "update": {
+            "description": "Updates state dict with given delta",
+            "parameters": {
+              "delta": "dict"
+            }
+          },
+          "has_delta": {
+            "description": "Whether state has pending delta",
+            "return_type": "bool"
+          },
+          "to_dict": {
+            "description": "Returns the state dict",
+            "return_type": "dict[str, Any]"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.sessions.State",
+    "descricao_processada": "State class from google.adk.sessions module for maintaining current values and pending-commit delta in conversation sessions. Methods: get, update, has_delta, to_dict. Constants: APP_PREFIX, USER_PREFIX, TEMP_PREFIX for key namespacing. Search terms: state management, session state, pending delta, commit changes, conversation memory, key-value store, session data, temporary variables, user data, app data, state dictionary, session persistence."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "BaseTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "The base class for all tools",
+      "methods": [
+        {
+          "method": "process_llm_request",
+          "description": "Processes outgoing LLM request for this tool"
+        },
+        {
+          "method": "run_async",
+          "description": "Runs the tool with given arguments"
+        }
+      ],
+      "fields": [
+        {
+          "field": "name",
+          "description": "Name of the tool"
+        },
+        {
+          "field": "description",
+          "description": "Description of the tool"
+        },
+        {
+          "field": "is_long_running",
+          "description": "Whether tool is long running operation"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "BaseTool",
+      "class_data": {
+        "description": "The base class for all tools",
+        "type": "abstract",
+        "fields": {
+          "name": {
+            "type": "str",
+            "description": "Name of the tool"
+          },
+          "description": {
+            "type": "str",
+            "description": "Description of the tool"
+          },
+          "is_long_running": {
+            "type": "bool",
+            "default": false,
+            "description": "Whether tool is long running operation"
+          }
+        },
+        "methods": {
+          "process_llm_request": {
+            "description": "Processes outgoing LLM request for this tool",
+            "parameters": {
+              "tool_context": "ToolContext",
+              "llm_request": "LlmRequest"
+            },
+            "return_type": "None"
+          },
+          "run_async": {
+            "description": "Runs the tool with given arguments",
+            "parameters": {
+              "args": "dict",
+              "tool_context": "ToolContext"
+            },
+            "return_type": "Any"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.BaseTool",
+    "descricao_processada": "BaseTool class from google.adk.tools module for providing base functionality for all tools in Agent Development Kit. Type: abstract. Methods: process_llm_request, run_async. Fields: name, description, is_long_running. Search terms: base tool, abstract tool, tool foundation, agent tools, LLM integration, async execution, long running operations, tool processing, custom tools, tool inheritance, tool framework."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "FunctionTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A tool that wraps a user-defined Python function"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "FunctionTool",
+      "class_data": {
+        "description": "A tool that wraps a user-defined Python function",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "func": "Callable"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.FunctionTool",
+    "descricao_processada": "FunctionTool class from google.adk.tools module for wrapping user-defined Python functions as tools usable by agents. Inherits from BaseTool. Constructor parameter: func (Callable). Search terms: function tool, custom tools, python integration, agent tools, tool wrapper, callable, function registration, extend agent capabilities, user-defined functions, python callable, tool creation, function wrapping."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "LongRunningFunctionTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A function tool that returns result asynchronously"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "LongRunningFunctionTool",
+      "class_data": {
+        "description": "A function tool that returns result asynchronously",
+        "base_class": "FunctionTool"
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.LongRunningFunctionTool",
+    "descricao_processada": "LongRunningFunctionTool class from google.adk.tools module for executing functions that return results asynchronously. Inherits from FunctionTool. Search terms: long running function, async function tool, asynchronous execution, delayed results, background processing, time consuming operations, async tool, function wrapper, agent tools, non-blocking execution."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "ExampleTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A tool that adds few-shot examples to LLM request"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ExampleTool",
+      "class_data": {
+        "description": "A tool that adds few-shot examples to LLM request",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "examples": "List[Example]"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.ExampleTool",
+    "descricao_processada": "ExampleTool class from google.adk.tools module for adding few-shot examples to LLM requests. Inherits from BaseTool. Constructor parameters: examples (List[Example]). Search terms: example tool, few-shot learning, LLM examples, prompt examples, training examples, demonstration cases, example-based learning, shot prompting, context examples, agent tools."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "VertexAiSearchTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A built-in tool using Vertex AI Search"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "VertexAiSearchTool",
+      "class_data": {
+        "description": "A built-in tool using Vertex AI Search",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "data_store_id": "Optional[str]",
+          "search_engine_id": "Optional[str]"
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.VertexAiSearchTool",
+    "descricao_processada": "VertexAiSearchTool class from google.adk.tools module for integrating Vertex AI Search capabilities into agents. Inherits from BaseTool. Constructor parameters: data_store_id, search_engine_id. Search terms: vertex ai search, google search, enterprise search, document search, knowledge base, search integration, ai search, vertex search, data store, search engine, built-in tool, search capabilities."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "APIHubToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Generates tools from API Hub resource",
+      "methods": [
+        {
+          "method": "get_tool",
+          "description": "Retrieves a specific tool by name"
+        },
+        {
+          "method": "get_tools",
+          "description": "Retrieves all available tools"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "APIHubToolset",
+      "class_data": {
+        "description": "Generates tools from API Hub resource",
+        "constructor_params": {
+          "apihub_resource_name": "str",
+          "access_token": "Optional[str]",
+          "service_account_json": "Optional[str]",
+          "name": "str = ''",
+          "description": "str = ''",
+          "lazy_load_spec": "bool = False",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]",
+          "apihub_client": "Optional[Client]"
+        },
+        "methods": {
+          "get_tool": {
+            "description": "Retrieves a specific tool by name",
+            "parameters": {
+              "name": "str"
+            },
+            "return_type": "Optional[RestApiTool]"
+          },
+          "get_tools": {
+            "description": "Retrieves all available tools",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.APIHubToolset",
+    "descricao_processada": "APIHubToolset class from google.adk.tools module for generating tools from API Hub resources. Methods: get_tool, get_tools. Constructor parameters: apihub_resource_name, access_token, service_account_json, name, description, lazy_load_spec, auth_scheme, auth_credential, apihub_client. Search terms: API Hub toolset, API integration, tool generation, REST API tools, service account authentication, access token, lazy loading, API Hub client, tool retrieval, API resource management."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "RestApiTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "A generic tool that interacts with REST API",
+      "methods": [
+        {
+          "method": "from_parsed_operation",
+          "description": "Initializes from ParsedOperation object"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "RestApiTool",
+      "class_data": {
+        "description": "A generic tool that interacts with REST API",
+        "base_class": "BaseTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "endpoint": "dict",
+          "operation": "dict",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]",
+          "should_parse_operation": "bool = True"
+        },
+        "methods": {
+          "from_parsed_operation": {
+            "description": "Initializes from ParsedOperation object",
+            "parameters": {
+              "parsed": "ParsedOperation"
+            },
+            "return_type": "RestApiTool",
+            "static": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.RestApiTool",
+    "descricao_processada": "RestApiTool class from google.adk.tools module for interacting with REST APIs as agent tools. Inherits from BaseTool. Methods: from_parsed_operation. Constructor parameters: name, description, endpoint, operation, auth_scheme, auth_credential, should_parse_operation. Search terms: REST API tool, HTTP requests, API integration, web services, endpoint configuration, authentication, API operations, parsed operation, agent tools, REST client, HTTP tool, API wrapper."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "OpenAPIToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Parses OpenAPI spec into list of RestApiTool",
+      "methods": [
+        {
+          "method": "get_tool",
+          "description": "Get a tool by name"
+        },
+        {
+          "method": "get_tools",
+          "description": "Get all tools in the toolset"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "OpenAPIToolset",
+      "class_data": {
+        "description": "Parses OpenAPI spec into list of RestApiTool",
+        "constructor_params": {
+          "spec_dict": "Optional[dict]",
+          "spec_str": "Optional[str]",
+          "spec_str_type": "str = 'json'",
+          "auth_scheme": "Optional[AuthScheme]",
+          "auth_credential": "Optional[AuthCredential]"
+        },
+        "methods": {
+          "get_tool": {
+            "description": "Get a tool by name",
+            "parameters": {
+              "tool_name": "str"
+            },
+            "return_type": "Optional[RestApiTool]"
+          },
+          "get_tools": {
+            "description": "Get all tools in the toolset",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.OpenAPIToolset",
+    "descricao_processada": "OpenAPIToolset class from google.adk.tools module for parsing OpenAPI specifications into collections of RestApiTool objects. Methods: get_tool, get_tools. Constructor accepts OpenAPI spec as dictionary or string (JSON/YAML), with optional authentication schemes and credentials. Enables agents to dynamically consume REST APIs defined by OpenAPI specifications. Search terms: openapi toolset, api specification, rest api tools, swagger, api integration, dynamic tool generation, authentication, api consumption, toolset management, spec parsing."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "MCPToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Connects to MCP Server and retrieves MCP Tools into ADK Tools",
+      "methods": [
+        {
+          "method": "from_server",
+          "description": "Retrieve all tools from MCP connection"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "MCPToolset",
+      "class_data": {
+        "description": "Connects to MCP Server and retrieves MCP Tools into ADK Tools",
+        "constructor_params": {
+          "connection_params": "Union[StdioServerParameters, SseServerParams]",
+          "errlog": "IO = stderr",
+          "exit_stack": "AsyncExitStack"
+        },
+        "methods": {
+          "from_server": {
+            "description": "Retrieve all tools from MCP connection",
+            "parameters": {
+              "connection_params": "Union[StdioServerParameters, SseServerParams]",
+              "async_exit_stack": "Optional[AsyncExitStack]",
+              "errlog": "IO = stderr"
+            },
+            "return_type": "Tuple[List[MCPTool], AsyncExitStack]",
+            "static": true
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.MCPToolset",
+    "descricao_processada": "MCPToolset class from google.adk.tools module for connecting to MCP Server and retrieving MCP Tools into ADK Tools. Methods: from_server. Constructor parameters: connection_params, errlog, exit_stack. Search terms: MCP toolset, Model Context Protocol, server connection, tool retrieval, MCP tools, ADK integration, stdio server, SSE server, tool conversion, external tools, protocol bridge, MCP server client."
+  },
+  {
+    "type": "class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "class": "ToolContext"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "The context of the tool",
+      "methods": [
+        {
+          "method": "request_credential",
+          "description": "Request authentication credential"
+        },
+        {
+          "method": "get_auth_response",
+          "description": "Get authentication response"
+        },
+        {
+          "method": "list_artifacts",
+          "description": "Lists artifact filenames in current session"
+        },
+        {
+          "method": "search_memory",
+          "description": "Searches memory of current user"
+        }
+      ],
+      "fields": [
+        {
+          "field": "invocation_context",
+          "description": "The invocation context of the tool"
+        },
+        {
+          "field": "function_call_id",
+          "description": "Function call ID of current tool call"
+        },
+        {
+          "field": "event_actions",
+          "description": "Event actions of current tool call"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ToolContext",
+      "class_data": {
+        "description": "The context of the tool",
+        "base_class": "CallbackContext",
+        "fields": {
+          "invocation_context": {
+            "type": "InvocationContext",
+            "description": "The invocation context of the tool"
+          },
+          "function_call_id": {
+            "type": "Optional[str]",
+            "description": "Function call ID of current tool call"
+          },
+          "event_actions": {
+            "type": "Optional[EventActions]",
+            "description": "Event actions of current tool call"
+          }
+        },
+        "methods": {
+          "request_credential": {
+            "description": "Request authentication credential",
+            "parameters": {
+              "auth_config": "AuthConfig"
+            },
+            "return_type": "None"
+          },
+          "get_auth_response": {
+            "description": "Get authentication response",
+            "parameters": {
+              "auth_config": "AuthConfig"
+            },
+            "return_type": "AuthCredential"
+          },
+          "list_artifacts": {
+            "description": "Lists artifact filenames in current session",
+            "return_type": "list[str]"
+          },
+          "search_memory": {
+            "description": "Searches memory of current user",
+            "parameters": {
+              "query": "str"
+            },
+            "return_type": "SearchMemoryResponse"
+          }
+        }
+      }
+    },
+    "filtro": "class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.ToolContext",
+    "descricao_processada": "ToolContext class from google.adk.tools module for providing context and utilities during tool execution. Inherits from CallbackContext. Methods: request_credential, get_auth_response, list_artifacts, search_memory. Fields: invocation_context, function_call_id, event_actions. Search terms: tool context, execution context, authentication, credentials, artifacts, memory search, function call, event actions, tool utilities, context management, auth response, session artifacts."
+  },
+  {
+    "type": "module_functions",
+    "hierarchy": {
+      "module": "google.adk.tools"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "functions": [
+        {
+          "function": "exit_loop",
+          "description": "Exits the loop. Call only when instructed."
+        },
+        {
+          "function": "transfer_to_agent",
+          "description": "Transfer question to another agent"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "functions": {
+        "exit_loop": {
+          "description": "Exits the loop. Call only when instructed.",
+          "parameters": {
+            "tool_context": "ToolContext"
+          }
+        },
+        "transfer_to_agent": {
+          "description": "Transfer question to another agent",
+          "parameters": {
+            "agent_name": "str",
+            "tool_context": "ToolContext"
+          }
+        }
+      }
+    },
+    "filtro": "module_functions",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.functions",
+    "descricao_processada": "Module functions from google.adk.tools package containing utility functions for agent operations. Functions: exit_loop, transfer_to_agent. The exit_loop function terminates loop execution when instructed, while transfer_to_agent enables delegation of questions to other agents in the system. Both functions require ToolContext parameter for proper execution context. Search terms: module functions, agent tools, exit loop, transfer agent, delegation, agent switching, loop termination, question routing, tool context, agent communication, workflow control."
+  },
+  {
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "BaseRetrievalTool"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Base class for retrieval tools",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "BaseRetrievalTool",
+      "class_data": {
+        "description": "Base class for retrieval tools",
+        "base_class": "BaseTool"
+      },
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "filtro": "submodule_class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.retrieval.BaseRetrievalTool",
+    "descricao_processada": "BaseRetrievalTool class from google.adk.tools.retrieval module for base functionality of retrieval tools used by agents. Inherits from BaseTool. Related classes: LlamaIndexRetrieval, FilesRetrieval, VertexAiRagRetrieval. Search terms: base retrieval tool, information retrieval, document search, knowledge base, RAG, retrieval augmented generation, search tools, document lookup, content retrieval, vector search, semantic search, knowledge retrieval."
+  },
+  {
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "LlamaIndexRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool using LlamaIndex",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "LlamaIndexRetrieval",
+      "class_data": {
+        "description": "Retrieval tool using LlamaIndex",
+        "base_class": "BaseRetrievalTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "retriever": "Retriever"
+        }
+      },
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "filtro": "submodule_class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.retrieval.LlamaIndexRetrieval",
+    "descricao_processada": "LlamaIndexRetrieval class from google.adk.tools.retrieval module for retrieval operations using LlamaIndex framework. Inherits from BaseRetrievalTool. Constructor parameters: name, description, retriever. Search terms: llama index, retrieval tool, document retrieval, information retrieval, RAG, retriever, knowledge base, search tool, vector search, semantic search, document search, llamaindex integration."
+  },
+  {
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "FilesRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool for files",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "FilesRetrieval",
+      "class_data": {
+        "description": "Retrieval tool for files",
+        "base_class": "LlamaIndexRetrieval",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "input_dir": "str"
+        }
+      },
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "filtro": "submodule_class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.retrieval.FilesRetrieval",
+    "descricao_processada": "FilesRetrieval class from google.adk.tools.retrieval module for retrieving information from files using LlamaIndex integration. Inherits from LlamaIndexRetrieval. Constructor parameters: name, description, input_dir. Search terms: file retrieval, document search, file indexing, LlamaIndex, RAG retrieval, document retrieval, file-based search, information extraction, file processing, retrieval tool, document analysis, file content search."
+  },
+  {
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "retrieval",
+      "class": "VertexAiRagRetrieval"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Retrieval tool using Vertex AI RAG",
+      "submodule": "Retrieval tools"
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "VertexAiRagRetrieval",
+      "class_data": {
+        "description": "Retrieval tool using Vertex AI RAG",
+        "base_class": "BaseRetrievalTool",
+        "constructor_params": {
+          "name": "str",
+          "description": "str",
+          "rag_corpora": "Optional[List[str]]",
+          "rag_resources": "Optional[List[dict]]",
+          "similarity_top_k": "Optional[int]",
+          "vector_distance_threshold": "Optional[float]"
+        }
+      },
+      "submodule_name": "retrieval",
+      "submodule_description": "Retrieval tools"
+    },
+    "filtro": "submodule_class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.retrieval.VertexAiRagRetrieval",
+    "descricao_processada": "VertexAiRagRetrieval class from google.adk.tools.retrieval module for retrieval-augmented generation using Vertex AI RAG capabilities. Inherits from BaseRetrievalTool. Constructor parameters: name, description, rag_corpora, rag_resources, similarity_top_k, vector_distance_threshold. Search terms: vertex ai rag, retrieval augmented generation, rag tool, vector search, similarity search, document retrieval, knowledge base, corpora, vector distance, top k results, google cloud ai, vertex ai integration."
+  },
+  {
+    "type": "submodule_class",
+    "hierarchy": {
+      "module": "google.adk.tools",
+      "submodule": "application_integration_tool",
+      "class": "ApplicationIntegrationToolset"
+    },
+    "descriptions": {
+      "module": "Package containing various tools for agents",
+      "class": "Generates tools from Application Integration or Integration Connector resource",
+      "submodule": "Application Integration tools",
+      "methods": [
+        {
+          "method": "get_tools",
+          "description": "Get all available tools"
+        }
+      ]
+    },
+    "content": {
+      "module_name": "google.adk.tools",
+      "module_description": "Package containing various tools for agents",
+      "class_name": "ApplicationIntegrationToolset",
+      "class_data": {
+        "description": "Generates tools from Application Integration or Integration Connector resource",
+        "constructor_params": {
+          "project": "str",
+          "location": "str",
+          "integration": "Optional[str]",
+          "triggers": "Optional[List[str]]",
+          "connection": "Optional[str]",
+          "entity_operations": "Optional[dict]",
+          "actions": "Optional[List[str]]",
+          "tool_name": "str = ''",
+          "tool_instructions": "str = ''",
+          "service_account_json": "Optional[dict]"
+        },
+        "methods": {
+          "get_tools": {
+            "description": "Get all available tools",
+            "return_type": "List[RestApiTool]"
+          }
+        }
+      },
+      "submodule_name": "application_integration_tool",
+      "submodule_description": "Application Integration tools"
+    },
+    "filtro": "submodule_class",
+    "filtro_2": "adk",
+    "id": "google.adk.tools.application_integration_tool.ApplicationIntegrationToolset",
+    "descricao_processada": "ApplicationIntegrationToolset class from google.adk.tools.application_integration_tool module for generating tools from Application Integration or Integration Connector resources. Methods: get_tools. Constructor parameters: project, location, integration, triggers, connection, entity_operations, actions, tool_name, tool_instructions, service_account_json. Search terms: application integration, integration connector, toolset generator, REST API tools, Google Cloud integration, workflow automation, enterprise integration, connector tools, integration platform, API wrapper, cloud services integration."
+  },
+  {
+    "type": "examples_collection",
+    "hierarchy": {
+      "root": "usage_examples"
+    },
+    "descriptions": {
+      "collection": "Collection of usage examples for ADK",
+      "title": "Google ADK API Reference - Python",
+      "description": "Google Agent Development Kit (ADK) API documentation for Python"
+    },
+    "content": {
+      "example_count": 5,
+      "example_names": [
+        "basic_agent",
+        "agent_with_tools",
+        "running_agent",
+        "openapi_tools",
+        "mcp_tools"
+      ],
+      "structure_note": "Examples contain description and code fields"
+    },
+    "filtro": "examples_collection",
+    "filtro_2": "adk",
+    "id": "usage_examples",
+    "descricao_processada": "Usage examples collection from Google ADK API Reference for Python demonstrating practical implementation patterns. Contains 5 examples: basic_agent, agent_with_tools, running_agent, openapi_tools, mcp_tools. Each example includes description and code implementation. Search terms: usage examples, code samples, implementation guide, basic agent, agent tools, running agents, openapi integration, mcp tools, practical examples, getting started, tutorial, code snippets, agent development patterns."
+  },
+  {
+    "type": "concepts_collection",
+    "hierarchy": {
+      "root": "key_concepts"
+    },
+    "descriptions": {
+      "collection": "Key concepts and definitions for ADK",
+      "title": "Google ADK API Reference - Python",
+      "description": "Google Agent Development Kit (ADK) API documentation for Python"
+    },
+    "content": {
+      "concept_count": 8,
+      "concept_names": [
+        "agents",
+        "tools",
+        "sessions",
+        "events",
+        "runners",
+        "artifacts",
+        "memory",
+        "planners"
+      ],
+      "structure_note": "Each concept contains a definition/explanation"
+    },
+    "filtro": "concepts_collection",
+    "filtro_2": "adk",
+    "id": "key_concepts",
+    "descricao_processada": "Key concepts collection for Google Agent Development Kit (ADK) Python API documentation covering fundamental components and definitions. Contains 8 core concepts: agents, tools, sessions, events, runners, artifacts, memory, planners. Each concept provides definitions and explanations for understanding ADK architecture and functionality. Search terms: ADK concepts, agent development, core components, API reference, Python SDK, agent architecture, fundamental definitions, development guide, ADK basics, concept overview."
+  }
+]
